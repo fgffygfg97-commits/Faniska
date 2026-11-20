@@ -1,1 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Собери термометры — побег от Фаниса</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #0a0a0f; overflow: hidden;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #fff; user-select: none; -webkit-user-select: none;
+    touch-action: none;
+  }
+  #viewport {
+    position: absolute; inset: 0; overflow: hidden;
+    background: radial-gradient(circle at 50% 40%, #1e1e2a, #0a0a12);
+    touch-action: none;
+  }
+  #world {
+    position: absolute; top: 0; left: 0;
+    width: 2400px; height: 1800px;
+    background:
+      repeating-linear-gradient(0deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px),
+      repeating-linear-gradient(90deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px);
+    transform-origin: 0 0; will-change: transform;
+  }
+  .wall {
+    position: absolute;
+    background: linear-gradient(135deg, #45455a, #2a2a3a);
+    border: 2px solid #5a5a70;
+    box-shadow: inset 0 0 12px #000, 0 2px 6px rgba(0,0,0,0.7);
+    z-index: 2;
+    box-sizing: border-box; 
+  }
 
+  /* ===== ИГРОК ===== */
+  #player {
+    position: absolute;
+    width: 56px; height: 56px;
+    z-index: 6;
+    background-image: url('https://images4.imgbox.com/18/76/82TfLIKI_o.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: translate(-150%, -150%);
+    margin-left: 28px;
+    margin-top: 28px;
+  }
+
+  /* ===== ФАНИС ===== */
+  #fanis {
+    position: absolute;
+    width: 80px; height: 110px;
+    z-index: 6;
+    background-image: url('https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top;
+    border-radius: 10px;
+    border: 2px solid #ff1744;
+    box-shadow: 0 0 20px #ff0000;
+    transition: box-shadow 0.15s, filter 0.15s;
+    transform: translate(-150%, -150%);
+    margin-left: 40px;
+    margin-top: 55px;
+  }
+  #fanis.aiming {
+    box-shadow: 0 0 30px #ffeb3b, 0 0 50px #ff9800;
+    filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800);
+  }
+
+  /* ===== ТЕРМОМЕТР (без свечения, +25% к размеру) ===== */
+  .thermo {
+    position: absolute;
+    background-image: url('https://images4.imgbox.com/de/4c/vfiBWV4R_o.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 4;
+    animation: thermoBob 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes thermoBob {
+    from { transform: translateY(0) scale(1); }
+    to   { transform: translateY(-3px) scale(1.05); }
+  }
+
+  /* ===== ПУЛЯ ===== */
+  .bullet {
+    position: absolute;
+    width: 24px; height: 24px;
+    background-image: url('https://images4.imgbox.com/6c/22/QUZMdjdM_o.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 4;
+    filter: drop-shadow(0 0 8px #ff9800);
+    transform: translate(-50%, -50%);
+  }
+  .bullet.fast {
+    filter: drop-shadow(0 0 12px #ffeb3b) drop-shadow(0 0 6px #ff1744);
+  }
+
+  #ui {
+    position: absolute;
+    top: max(8px, env(safe-area-inset-top));
+    left: 8px; right: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 16px; z-index: 30;
+    text-shadow: 0 0 6px #000;
+    pointer-events: none; flex-wrap: wrap; gap: 6px;
+  }
+  #score-big {
+    font-size: 20px; font-weight: bold; color: #ffd54f;
+    text-shadow: 0 0 8px #ff8f00, 0 0 3px #000;
+  }
+
+  #minimap {
+    position: absolute;
+    top: max(48px, calc(env(safe-area-inset-top) + 40px));
+    right: max(10px, env(safe-area-inset-right));
+    width: 170px; height: 128px;
+    background: rgba(0,0,0,0.7);
+    border: 2px solid #666;
+    border-radius: 8px;
+    z-index: 25;
+    overflow: hidden; pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-sizing: border-box;
+  }
+  #minimap::before {
+    content: "КАРТА";
+    position: absolute;
+    top: 2px; left: 6px;
+    font-size: 9px;
+    color: #aaa;
+    letter-spacing: 1px;
+    z-index: 2;
+  }
+  #minimap canvas { width: 100%; height: 100%; display: block; }
+
+  #message {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px; text-align: center;
+    z-index: 40; display: none;
+    background: rgba(0,0,0,0.94);
+    padding: 26px 32px; border-radius: 12px;
+    border: 2px solid #fff;
+    max-width: 92%; max-height: 90%; overflow-y: auto;
+  }
+  #message button {
+    margin-top: 18px; padding: 14px 36px;
+    font-size: 20px; cursor: pointer;
+    background: #4fc3f7; border: none; border-radius: 8px;
+    color: #000; font-weight: bold;
+    min-width: 180px; touch-action: manipulation;
+  }
+  #message button:hover { background: #29b6f6; }
+  #message button:active { transform: scale(0.96); }
+
+  #joystick {
+    position: absolute;
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    left: 20px;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.25);
+    z-index: 35; display: none; touch-action: none;
+  }
+  #stick {
+    position: absolute; top: 50%; left: 50%;
+    width: 56px; height: 56px;
+    margin-left: -28px; margin-top: -28px;
+    background: rgba(79,195,247,0.7);
+    border-radius: 50%; border: 2px solid #b3e5fc;
+    box-shadow: 0 0 15px #4fc3f7;
+    pointer-events: none; will-change: transform;
+  }
+  #dashBtn {
+    position: absolute;
+    bottom: calc(30px + env(safe-area-inset-bottom));
+    right: 20px;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(255,23,68,0.4);
+    border: 2px solid rgba(255,82,82,0.8);
+    color: #fff; font-size: 14px; font-weight: bold;
+    z-index: 35; display: none;
+    align-items: center; justify-content: center;
+    text-shadow: 0 0 4px #000;
+    touch-action: none; cursor: pointer; user-select: none;
+  }
+  #dashBtn:active { background: rgba(255,23,68,0.8); transform: scale(0.95); }
+  #dashBtn.cooling { opacity: 0.4; }
+  body.touch #joystick { display: block; }
+  body.touch #dashBtn { display: flex; }
+
+  @media (max-width: 500px) {
+    #joystick { width: 110px; height: 110px; }
+    #stick { width: 48px; height: 48px; margin-left: -24px; margin-top: -24px; }
+    #dashBtn { width: 80px; height: 80px; font-size: 13px; }
+    #minimap { width: 120px; height: 90px; top: max(44px, calc(env(safe-area-inset-top) + 38px)); }
+    #ui { font-size: 13px; }
+    #score-big { font-size: 16px; }
+    #message { font-size: 20px; padding: 20px 24px; }
+    #message button { font-size: 17px; padding: 12px 28px; }
+    #player { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
+    #fanis { width: 68px; height: 94px; margin-left: 34px; margin-top: 47px; }
+  }
+
+  #hint {
+    position: absolute;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    right: max(12px, env(safe-area-inset-right));
+    font-size: 12px; opacity: 0.55;
+    z-index: 30; pointer-events: none; text-align: right;
+    max-width: 200px;
+  }
+  body.touch #hint { display: none; }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="world">
+    <div id="player"></div>
+    <div id="fanis"></div>
+  </div>
+  <div id="ui">
+    <div id="score-big">⭐ <span id="score">0</span> очков</div>
+    <div>🌡️ <span id="onfield">0</span> на поле</div>
+    <div>⏱️ <span id="timer">0.0</span> с</div>
+  </div>
+  <div id="minimap"><canvas id="mmcanvas" width="170" height="128"></canvas></div>
+  <div id="message"></div>
+  <div id="joystick"><div id="stick"></div></div>
+  <div id="dashBtn">РЫВОК</div>
+  <div id="hint">Стрелки/WASD — движение • Пробел — рывок</div>
+</div>
+
+<script>
+(() => {
+  const viewport = document.getElementById('viewport');
+  const world = document.getElementById('world');
+  const player = document.getElementById('player');
+  const fanis = document.getElementById('fanis');
+  const scoreEl = document.getElementById('score');
+  const onfieldEl = document.getElementById('onfield');
+  const timerEl = document.getElementById('timer');
+  const messageEl = document.getElementById('message');
+  const mmCanvas = document.getElementById('mmcanvas');
+  const mmCtx = mmCanvas.getContext('2d');
+  const joystick = document.getElementById('joystick');
+  const stick = document.getElementById('stick');
+  const dashBtn = document.getElementById('dashBtn');
+
+  const W = 2400, H = 1800;
+  const P_SIZE = 56, F_SIZE = 80;
+  const THERMO_ON_FIELD = 12;
+  const T = 30;
+
+  const WALLS = [];
+  function wall(x, y, w, h) { WALLS.push({ x, y, w, h }); }
+  wall(0, 0, W, T);
+  wall(0, H - T, W, T);
+  wall(0, 0, T, H);
+  wall(W - T, 0, T, H);
+  [600, 1200, 1800].forEach(x => {
+    let cy = T;
+    while (cy < H - T) {
+      const y1 = cy, y2 = Math.min(cy + 160, H - T);
+      if (y2 - y1 > 5) wall(x, y1, T, y2 - y1);
+      cy += 300;
+    }
+  });
+  [450, 900, 1350].forEach(y => {
+    let cx = T;
+    while (cx < W - T) {
+      const x1 = cx, x2 = Math.min(cx + 180, W - T);
+      if (x2 - x1 > 5) wall(x1, y, x2 - x1, T);
+      cx += 320;
+    }
+  });
+  wall(300, 300, 120, 120);
+  wall(800, 1000, 140, 140);
+  wall(1500, 300, 160, 100);
+  wall(2000, 1200, 140, 140);
+  wall(400, 1300, 100, 200);
+  wall(1350, 1400, 200, 100);
+  wall(1900, 600, 100, 180);
+  wall(900, 550, 180, 100);
+
+  let px = 120, py = 120;
+  let pvx = 0, pvy = 0;
+  let fx = W - 200, fy = H - 200;
+  let score = 0;
+  let running = false, startTime = null, lastTime = 0;
+  let thermos = [], bullets = [];
+  let shootCooldown = 0;
+  let dashCooldown = 0, dashActive = 0;
+  let dashDir = { x: 0, y: 0 };
+  let camX = 0, camY = 0;
+  let rafId = 0;
+  let aimFlashTimer = 0;
+
+  const keys = Object.create(null);
+  let joyActive = false, joyVX = 0, joyVY = 0;
+
+  function circleRect(cx, cy, r, rect) {
+    const nx = Math.max(rect.x, Math.min(cx, rect.x + rect.w));
+    const ny = Math.max(rect.y, Math.min(cy, rect.y + rect.h));
+    const dx = cx - nx, dy = cy - ny;
+    return dx * dx + dy * dy < r * r;
+  }
+  function hitsWall(cx, cy, r) {
+    for (const w of WALLS) if (circleRect(cx, cy, r - 1, w)) return true;
+    return false;
+  }
+  function tryMove(obj, dx, dy, r) {
+    if (!hitsWall(obj.x + dx, obj.y, r)) obj.x += dx;
+    if (!hitsWall(obj.x, obj.y + dy, r)) obj.y += dy;
+    obj.x = Math.max(r, Math.min(W - r, obj.x));
+    obj.y = Math.max(r, Math.min(H - r, obj.y));
+  }
+
+  function segIntersectsRect(ax, ay, bx, by, rect) {
+    const minX = Math.min(ax, bx), maxX = Math.max(ax, bx);
+    const minY = Math.min(ay, by), maxY = Math.max(ay, by);
+    if (maxX < rect.x || minX > rect.x + rect.w || maxY < rect.y || minY > rect.y + rect.h) return false;
+    if (ax >= rect.x && ax <= rect.x + rect.w && ay >= rect.y && ay <= rect.y + rect.h) return true;
+    if (bx >= rect.x && bx <= rect.x + rect.w && by >= rect.y && by <= rect.y + rect.h) return true;
+    function segSeg(x1, y1, x2, y2, x3, y3, x4, y4) {
+      const d1 = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+      const d2 = (x4 - x3) * (y2 - y3) - (y4 - y3) * (x2 - x3);
+      const d3 = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+      const d4 = (x2 - x1) * (y4 - y1) - (y2 - y1) * (x4 - x1);
+      return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+             ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+    }
+    const x2 = rect.x + rect.w, y2 = rect.y + rect.h;
+    return segSeg(ax, ay, bx, by, rect.x, rect.y, x2, rect.y) ||
+           segSeg(ax, ay, bx, by, x2, rect.y, x2, y2) ||
+           segSeg(ax, ay, bx, by, x2, y2, rect.x, y2) ||
+           segSeg(ax, ay, bx, by, rect.x, y2, rect.x, rect.y);
+  }
+  function hasLineOfSight(ax, ay, bx, by) {
+    for (const w of WALLS) if (segIntersectsRect(ax, ay, bx, by, w)) return false;
+    return true;
+  }
+
+  function buildWalls() {
+    world.querySelectorAll('.wall').forEach(e => e.remove());
+    for (const w of WALLS) {
+      const el = document.createElement('div');
+      el.className = 'wall';
+      el.style.left = w.x + 'px';
+      el.style.top = w.y + 'px';
+      el.style.width = w.w + 'px';
+      el.style.height = w.h + 'px';
+      world.appendChild(el);
+    }
+  }
+
+  const CELL = 60;
+  const COLS = Math.ceil(W / CELL);
+  const ROWS = Math.ceil(H / CELL);
+  const walkCache = new Map();
+
+  function cellCenter(cx, cy) { return { x: cx * CELL + CELL / 2, y: cy * CELL + CELL / 2 }; }
+  function isWalkable(cx, cy) {
+    if (cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS) return false;
+    const c = cellCenter(cx, cy);
+    return !hitsWall(c.x, c.y, F_SIZE / 2 + 2);
+  }
+  function walkable(cx, cy) {
+    const key = cy * COLS + cx;
+    if (walkCache.has(key)) return walkCache.get(key);
+    const v = isWalkable(cx, cy);
+    walkCache.set(key, v);
+    return v;
+  }
+
+  class MinHeap {
+    constructor() { this.a = []; }
+    push(item) {
+      this.a.push(item);
+      let i = this.a.length - 1;
+      while (i > 0) {
+        const p = (i - 1) >> 1;
+        if (this.a[p].f <= this.a[i].f) break;
+        [this.a[p], this.a[i]] = [this.a[i], this.a[p]];
+        i = p;
+      }
+    }
+    pop() {
+      const top = this.a[0];
+      const last = this.a.pop();
+      if (this.a.length) {
+        this.a[0] = last;
+        let i = 0;
+        while (true) {
+          const l = i * 2 + 1, r = i * 2 + 2;
+          let m = i;
+          if (l < this.a.length && this.a[l].f < this.a[m].f) m = l;
+          if (r < this.a.length && this.a[r].f < this.a[m].f) m = r;
+          if (m === i) break;
+          [this.a[m], this.a[i]] = [this.a[i], this.a[m]];
+          i = m;
+        }
+      }
+      return top;
+    }
+    get size() { return this.a.length; }
+  }
+
+  function findPath(sx, sy, tx, ty) {
+    const start = { cx: Math.max(0, Math.min(COLS - 1, Math.floor(sx / CELL))), cy: Math.max(0, Math.min(ROWS - 1, Math.floor(sy / CELL))) };
+    const goal  = { cx: Math.max(0, Math.min(COLS - 1, Math.floor(tx / CELL))), cy: Math.max(0, Math.min(ROWS - 1, Math.floor(ty / CELL))) };
+    function nearest(c) {
+      if (walkable(c.cx, c.cy)) return c;
+      for (let r = 1; r < 8; r++)
+        for (let dx = -r; dx <= r; dx++)
+          for (let dy = -r; dy <= r; dy++) {
+            if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
+            if (walkable(c.cx + dx, c.cy + dy)) return { cx: c.cx + dx, cy: c.cy + dy };
+          }
+      return c;
+    }
+    const s = nearest(start), g = nearest(goal);
+    const sk = s.cy * COLS + s.cx, gk = g.cy * COLS + g.cx;
+    if (sk === gk) return [{ x: tx, y: ty }];
+    const open = new MinHeap();
+    const gScore = new Map(); const cameFrom = new Map(); const closed = new Set();
+    const h = (cx, cy) => Math.abs(cx - g.cx) + Math.abs(cy - g.cy);
+    gScore.set(sk, 0);
+    open.push({ cx: s.cx, cy: s.cy, f: h(s.cx, s.cy) });
+    const DIRS = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+    let iter = 0;
+    while (open.size && iter < 4000) {
+      iter++;
+      const cur = open.pop();
+      const ck = cur.cy * COLS + cur.cx;
+      if (closed.has(ck)) continue;
+      closed.add(ck);
+      if (ck === gk) {
+        const cells = []; let k = gk;
+        while (k !== undefined) {
+          const cx = k % COLS, cy = Math.floor(k / COLS);
+          cells.push(cellCenter(cx, cy));
+          k = cameFrom.get(k);
+        }
+        cells.reverse();
+        cells[cells.length - 1] = { x: tx, y: ty };
+        return cells;
+      }
+      const cg = gScore.get(ck) ?? Infinity;
+      for (const [dx, dy] of DIRS) {
+        const nx = cur.cx + dx, ny = cur.cy + dy;
+        if (!walkable(nx, ny)) continue;
+        if (dx !== 0 && dy !== 0) {
+          if (!walkable(cur.cx + dx, cur.cy) || !walkable(cur.cx, cur.cy + dy)) continue;
+        }
+        const nk = ny * COLS + nx;
+        if (closed.has(nk)) continue;
+        const step = (dx !== 0 && dy !== 0) ? 1.4142 : 1;
+        const tentative = cg + step;
+        if (tentative < (gScore.get(nk) ?? Infinity)) {
+          cameFrom.set(nk, ck);
+          gScore.set(nk, tentative);
+          open.push({ cx: nx, cy: ny, f: tentative + h(nx, ny) });
+        }
+      }
+    }
+    return [{ x: tx, y: ty }];
+  }
+
+  const VALUES = [5, 10, 15, 20, 30];
+  
+  // Увеличил базовые размеры на 25% (было 40+15, стало 50+18)
+  function randomThermoStyle() {
+    const w = 50 + Math.floor(Math.random() * 18);
+    const h = w * (2.0 + Math.random() * 0.4);
+    const value = VALUES[Math.floor(Math.random() * VALUES.length)];
+    return { w: Math.round(w), h: Math.round(h), value };
+  }
+
+  function spawnOneThermo() {
+    for (let attempt = 0; attempt < 800; attempt++) {
+      const style = randomThermoStyle();
+      const x = 40 + Math.random() * (W - 80 - style.w);
+      const y = 40 + Math.random() * (H - 80 - style.h);
+      const cx = x + style.w / 2, cy = y + style.h / 2;
+      const rr = Math.max(style.w, style.h) / 2 + 4;
+      if (hitsWall(cx, cy, rr)) continue;
+      if (Math.hypot(cx - (px + P_SIZE/2), cy - (py + P_SIZE/2)) < 150) continue;
+      if (Math.hypot(cx - (fx + F_SIZE/2), cy - (fy + F_SIZE/2)) < 250) continue;
+      let near = false;
+      for (const t of thermos) {
+        if (Math.hypot(cx - (t.x + t.style.w/2), cy - (t.y + t.style.h/2)) < 110) { near = true; break; }
+      }
+      if (near) continue;
+
+      const el = document.createElement('div');
+      el.className = 'thermo';
+      el.style.width = style.w + 'px';
+      el.style.height = style.h + 'px';
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      // Свечение (filter) убрано
+      world.appendChild(el);
+      thermos.push({ x, y, style, el });
+      return true;
+    }
+    return false;
+  }
+
+  function fillThermos() {
+    let guard = 0;
+    while (thermos.length < THERMO_ON_FIELD && guard++ < 100) {
+      if (!spawnOneThermo()) break;
+    }
+    onfieldEl.textContent = thermos.length;
+  }
+  function clearThermos() {
+    thermos.forEach(t => t.el.remove());
+    thermos = [];
+    onfieldEl.textContent = '0';
+  }
+
+  function resetGame() {
+    for (const k in keys) delete keys[k];
+    joyActive = false; joyVX = 0; joyVY = 0;
+    stick.style.transform = '';
+
+    px = 120; py = 120; pvx = 0; pvy = 0;
+    fx = W - 200; fy = H - 200;
+    score = 0; scoreEl.textContent = '0';
+    startTime = null; running = true;
+    shootCooldown = 0; dashCooldown = 0; dashActive = 0;
+    aimFlashTimer = 0;
+    fanis.classList.remove('aiming');
+    bullets.forEach(b => b.el.remove());
+    bullets = [];
+    clearThermos();
+    messageEl.style.display = 'none';
+
+    buildWalls();
+    walkCache.clear();
+    fanisPath = []; pathIndex = 0; pathRecalcTimer = 0;
+    fanis.style.left = (fx + F_SIZE/2) + 'px';
+    fanis.style.top = (fy + F_SIZE/2) + 'px';
+    player.style.left = (px + P_SIZE/2) + 'px';
+    player.style.top = (py + P_SIZE/2) + 'px';
+    player.style.opacity = '1';
+
+    fillThermos();
+    camX = px + P_SIZE/2 - viewport.clientWidth / 2;
+    camY = py + P_SIZE/2 - viewport.clientHeight / 2;
+    applyCamera();
+
+    lastTime = performance.now();
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function applyCamera() {
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    camX = Math.max(0, Math.min(W - vw, camX));
+    camY = Math.max(0, Math.min(H - vh, camY));
+    world.style.transform = `translate(${-Math.round(camX)}px, ${-Math.round(camY)}px)`;
+  }
+  function updateCamera() {
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    const tx = px + P_SIZE / 2 - vw / 2;
+    const ty = py + P_SIZE / 2 - vh / 2;
+    camX += (tx - camX) * 0.15;
+    camY += (ty - camY) * 0.15;
+    applyCamera();
+  }
+
+  let fanisPath = []; let pathIndex = 0; let pathRecalcTimer = 0;
+
+  function moveFanis(dt) {
+    pathRecalcTimer -= dt;
+    if (pathRecalcTimer <= 0 || fanisPath.length === 0 || pathIndex >= fanisPath.length) {
+      const lead = 6;
+      const tx = px + P_SIZE/2 + pvx * lead;
+      const ty = py + P_SIZE/2 + pvy * lead;
+      fanisPath = findPath(fx + F_SIZE/2, fy + F_SIZE/2, tx, ty);
+      pathIndex = 0;
+      pathRecalcTimer = 18;
+    }
+    let remaining = 2.7 * dt;
+    while (remaining > 0 && pathIndex < fanisPath.length) {
+      const target = fanisPath[pathIndex];
+      const dx = target.x - (fx + F_SIZE/2);
+      const dy = target.y - (fy + F_SIZE/2);
+      const d = Math.hypot(dx, dy);
+      if (d < 2) { pathIndex++; continue; }
+      const step = Math.min(remaining, d);
+      const obj = { x: fx, y: fy };
+      const bx = fx, by = fy;
+      tryMove(obj, (dx / d) * step, (dy / d) * step, F_SIZE / 2);
+      fx = obj.x; fy = obj.y;
+      const moved = Math.hypot(fx - bx, fy - by);
+      remaining -= moved;
+      if (moved < step * 0.3) pathIndex++;
+      if (moved < 0.1) break;
+    }
+    fanis.style.left = (fx + F_SIZE/2) + 'px';
+    fanis.style.top = (fy + F_SIZE/2) + 'px';
+
+    // Фикс хитбокса для касания (учитываем, что из-за translate спрайт смещён влево-вверх)
+    const fxReal = fx + F_SIZE/2 - 40; // Компенсация сдвига влево (margin-left 40)
+    const fyReal = fy + F_SIZE/2 - 55; // Компенсация сдвига вверх (margin-top 55)
+    
+    if (Math.hypot(px + P_SIZE/2 - (fx + F_SIZE/2), py + P_SIZE/2 - (fy + F_SIZE/2)) < (P_SIZE + F_SIZE) / 2 - 8) {
+      gameOver('КАСАНИЕ');
+    }
+  }
+
+  function fanisShoot() {
+    const fcx = fx + F_SIZE/2, fcy = fy + F_SIZE/2;
+    const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
+    const dist = Math.hypot(pcx - fcx, pcy - fcy);
+    if (dist < 1) return false;
+
+    const bulletSpeed = 6.5;
+    const travelTime = dist / bulletSpeed;
+    const leadX = pcx + pvx * travelTime * 0.85;
+    const leadY = pcy + pvy * travelTime * 0.85;
+    let tx = leadX, ty = leadY;
+
+    if (!hasLineOfSight(fcx, fcy, tx, ty)) {
+      if (hasLineOfSight(fcx, fcy, pcx, pcy)) { tx = pcx; ty = pcy; }
+      else return false;
+    }
+
+    const dx = tx - fcx, dy = ty - fcy;
+    const d = Math.hypot(dx, dy) || 1;
+    const nx = dx / d, ny = dy / d;
+
+    let count = 1, spread = 0;
+    if (dist < 350) { count = 3; spread = 0.18; }
+    else if (dist < 550) { count = 2; spread = 0.1; }
+
+    for (let i = 0; i < count; i++) {
+      const offset = (i - (count - 1) / 2) * spread;
+      const cos = Math.cos(offset), sin = Math.sin(offset);
+      const vx = (nx * cos - ny * sin) * bulletSpeed;
+      const vy = (nx * sin + ny * cos) * bulletSpeed;
+      const bx = fcx, by = fcy;
+      if (hitsWall(bx, by, 12)) continue;
+      const el = document.createElement('div');
+      el.className = 'bullet' + (dist < 350 ? ' fast' : '');
+      el.style.left = bx + 'px';
+      el.style.top = by + 'px';
+      world.appendChild(el);
+      bullets.push({ x: bx, y: by, vx, vy, el });
+    }
+    return true;
+  }
+
+  function updateBullets(dt) {
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      const b = bullets[i];
+      const dx = b.vx * dt, dy = b.vy * dt;
+      const totalLen = Math.hypot(dx, dy);
+      const substeps = Math.max(1, Math.ceil(totalLen / 6));
+      let removed = false;
+      for (let s = 0; s < substeps && !removed; s++) {
+        const nx = b.x + dx / substeps;
+        const ny = b.y + dy / substeps;
+        let hit = false;
+        for (const w of WALLS) if (circleRect(nx, ny, 12, w)) { hit = true; break; }
+        if (hit || nx < -20 || nx > W + 20 || ny < -20 || ny > H + 20) {
+          b.el.remove(); bullets.splice(i, 1); removed = true; break;
+        }
+        b.x = nx; b.y = ny;
+        if (Math.hypot(px + P_SIZE/2 - b.x, py + P_SIZE/2 - b.y) < P_SIZE/2 + 12) {
+          b.el.remove(); bullets.splice(i, 1); removed = true;
+          gameOver('ПУЛЯ');
+          return;
+        }
+      }
+      if (!removed) { b.el.style.left = b.x + 'px'; b.el.style.top = b.y + 'px'; }
+    }
+  }
+
+  function loop(now) {
+    if (!running) return;
+    if (!startTime) startTime = now;
+    const dt = Math.min((now - lastTime) / 16.67, 3);
+    lastTime = now;
+    timerEl.textContent = ((now - startTime) / 1000).toFixed(1);
+
+    if (shootCooldown > 0) shootCooldown -= dt;
+    if (dashCooldown > 0) {
+      dashCooldown -= dt;
+      if (dashCooldown <= 0) dashBtn.classList.remove('cooling');
+    }
+    if (dashActive > 0) dashActive -= dt;
+    if (aimFlashTimer > 0) {
+      aimFlashTimer -= dt;
+      if (aimFlashTimer <= 0) fanis.classList.remove('aiming');
+    }
+
+    let mx = 0, my = 0;
+    if (keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['A'] || keys['ф'] || keys['Ф']) mx -= 1;
+    if (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['D'] || keys['в'] || keys['В']) mx += 1;
+    if (keys['ArrowUp'] || keys['KeyW'] || keys['w'] || keys['W'] || keys['ц'] || keys['Ц']) my -= 1;
+    if (keys['ArrowDown'] || keys['KeyS'] || keys['s'] || keys['S'] || keys['ы'] || keys['Ы']) my += 1;
+    if (joyActive) { mx = joyVX; my = joyVY; }
+
+    let speed = 4.2 * dt;
+    if (dashActive > 0) { speed *= 2.8; mx = dashDir.x; my = dashDir.y; }
+    else { const len = Math.hypot(mx, my); if (len > 1) { mx /= len; my /= len; } }
+
+    const oldPx = px, oldPy = py;
+    const obj = { x: px, y: py };
+    tryMove(obj, mx * speed, my * speed, P_SIZE / 2);
+    px = obj.x; py = obj.y;
+
+    if (dt > 0.01) {
+      pvx = pvx * 0.6 + ((px - oldPx) / dt) * 0.4;
+      pvy = pvy * 0.6 + ((py - oldPy) / dt) * 0.4;
+    }
+
+    player.style.left = (px + P_SIZE/2) + 'px';
+    player.style.top = (py + P_SIZE/2) + 'px';
+    player.style.opacity = dashActive > 0 ? '0.55' : '1';
+
+    moveFanis(dt);
+
+    if (shootCooldown <= 0) {
+      const fcx = fx + F_SIZE/2, fcy = fy + F_SIZE/2;
+      const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
+      const dist = Math.hypot(pcx - fcx, pcy - fcy);
+      if (dist < 900 && hasLineOfSight(fcx, fcy, pcx, pcy)) {
+        fanis.classList.add('aiming');
+        aimFlashTimer = 8;
+        const shot = fanisShoot();
+        if (shot) shootCooldown = dist < 300 ? 30 : dist < 550 ? 42 : 55;
+        else shootCooldown = 20;
+      } else shootCooldown = 15;
+    }
+
+    updateBullets(dt);
+
+    for (let i = thermos.length - 1; i >= 0; i--) {
+      const t = thermos[i];
+      const tcx = t.x + t.style.w / 2, tcy = t.y + t.style.h / 2;
+      const r = Math.max(t.style.w, t.style.h) / 2 + P_SIZE / 2 - 4;
+      if (Math.hypot(px + P_SIZE/2 - tcx, py + P_SIZE/2 - tcy) < r) {
+        t.el.remove();
+        thermos.splice(i, 1);
+        score += t.style.value;
+        scoreEl.textContent = score;
+        spawnOneThermo();
+        onfieldEl.textContent = thermos.length;
+      }
+    }
+
+    updateCamera();
+    drawMinimap();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function drawMinimap() {
+    const s = Math.min(mmCanvas.width / W, mmCanvas.height / H);
+    mmCtx.clearRect(0, 0, mmCanvas.width, mmCanvas.height);
+    mmCtx.fillStyle = 'rgba(0,0,0,0.5)';
+    mmCtx.fillRect(0, 0, mmCanvas.width, mmCanvas.height);
+    mmCtx.fillStyle = '#555';
+    for (const w of WALLS) mmCtx.fillRect(w.x * s, w.y * s, Math.max(1, w.w * s), Math.max(1, w.h * s));
+    
+    // Рисуем термометры на мини-карте (без tint, так как убрали цвета из стилей)
+    mmCtx.fillStyle = '#ff1744'; 
+    for (const t of thermos) {
+      mmCtx.beginPath();
+      mmCtx.arc((t.x + t.style.w/2) * s, (t.y + t.style.h/2) * s, 2.5, 0, 7);
+      mmCtx.fill();
+    }
+    mmCtx.fillStyle = '#ff5252';
+    mmCtx.beginPath();
+    mmCtx.arc((fx + F_SIZE/2) * s, (fy + F_SIZE/2) * s, 4, 0, 7);
+    mmCtx.fill();
+    mmCtx.fillStyle = '#4fc3f7';
+    mmCtx.beginPath();
+    mmCtx.arc((px + P_SIZE/2) * s, (py + P_SIZE/2) * s, 3.5, 0, 7);
+    mmCtx.fill();
+  }
+
+  function gameOver(reason) {
+    if (!running) return;
+    running = false;
+    messageEl.style.display = 'block';
+    const time = timerEl.textContent;
+    const reasonText = reason === 'ПУЛЯ' ? 'Тебя настигла пуля Фаниса!' : 'Фанис до тебя добрался!';
+    messageEl.innerHTML = `💀 ${reasonText}<br><br>
+      ⭐ Очки: <b style="color:#ffd54f">${score}</b><br>
+      ⏱️ Время: ${time} с<br><br>
+      <button id="restart">Играть снова</button>`;
+    document.getElementById('restart').onclick = resetGame;
+  }
+
+  window.addEventListener('keydown', e => {
+    keys[e.code || e.key] = true;
+    if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
+      if (running && dashCooldown <= 0) doDash();
+      e.preventDefault(); return;
+    }
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  }, { passive: false });
+  window.addEventListener('keyup', e => { delete keys[e.code || e.key]; });
+  window.addEventListener('blur', () => { for (const k in keys) delete keys[k]; });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) for (const k in keys) delete keys[k]; });
+
+  function readDir() {
+    let mx = 0, my = 0;
+    if (keys['ArrowLeft']  || keys['KeyA'] || keys['a'] || keys['A'] || keys['ф'] || keys['Ф']) mx -= 1;
+    if (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['D'] || keys['в'] || keys['В']) mx += 1;
+    if (keys['ArrowUp']    || keys['KeyW'] || keys['w'] || keys['W'] || keys['ц'] || keys['Ц']) my -= 1;
+    if (keys['ArrowDown']  || keys['KeyS'] || keys['s'] || keys['S'] || keys['ы'] || keys['Ы']) my += 1;
+    return { mx, my };
+  }
+  function doDash() {
+    let { mx, my } = readDir();
+    if (joyActive) { mx = joyVX; my = joyVY; }
+    const len = Math.hypot(mx, my);
+    if (len > 0) {
+      dashDir = { x: mx / len, y: my / len };
+      dashActive = 12; dashCooldown = 90;
+      dashBtn.classList.add('cooling');
+    }
+  }
+
+  function detectTouch() {
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    document.body.classList.toggle('touch', hasTouch);
+  }
+  detectTouch();
+
+  let joyId = null;
+  joystick.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (joyId !== null) return;
+    const t = e.changedTouches[0];
+    joyId = t.identifier; joyActive = true; updateJoy(t);
+  }, { passive: false });
+  joystick.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) if (t.identifier === joyId) { updateJoy(t); break; }
+  }, { passive: false });
+  const endJoy = e => {
+    for (const t of e.changedTouches) if (t.identifier === joyId) {
+      joyId = null; joyActive = false; joyVX = 0; joyVY = 0; stick.style.transform = '';
+      break;
+    }
+  };
+  joystick.addEventListener('touchend', endJoy);
+  joystick.addEventListener('touchcancel', endJoy);
+  joystick.addEventListener('mousedown', e => {
+    if (!document.body.classList.contains('touch')) return;
+    e.preventDefault();
+    joyActive = true;
+    updateJoy({ clientX: e.clientX, clientY: e.clientY });
+    const mv = ev => updateJoy({ clientX: ev.clientX, clientY: ev.clientY });
+    const up = () => {
+      joyActive = false; joyVX = 0; joyVY = 0; stick.style.transform = '';
+      window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
+  });
+  function updateJoy(t) {
+    const rect = joystick.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+    let dx = t.clientX - cx, dy = t.clientY - cy;
+    const max = rect.width / 2 - 10;
+    const d = Math.hypot(dx, dy);
+    if (d > max) { dx = dx / d * max; dy = dy / d * max; }
+    stick.style.transform = `translate(${dx}px, ${dy}px)`;
+    joyVX = dx / max; joyVY = dy / max;
+  }
+  function onDash(e) { e.preventDefault(); if (running && dashCooldown <= 0) doDash(); }
+  dashBtn.addEventListener('touchstart', onDash, { passive: false });
+  dashBtn.addEventListener('click', onDash);
+
+  window.addEventListener('resize', applyCamera);
+  window.addEventListener('orientationchange', () => setTimeout(applyCamera, 100));
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  document.addEventListener('dblclick', e => e.preventDefault());
+
+  resetGame();
+})();
+</script>
+</body>
+</html>

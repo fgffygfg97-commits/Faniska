@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Собери термометры — побег от Фаниса</title>
+<title>Собери термометры и побеги от Фаниса</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -49,8 +49,8 @@
     margin-top: 28px;
   }
 
-  /* ===== ФАНИС ===== */
-  #fanis {
+  /* ===== ФАНИСЫ ===== */
+  .fanis {
     position: absolute;
     width: 80px; height: 110px;
     z-index: 6;
@@ -61,17 +61,16 @@
     border-radius: 10px;
     border: 2px solid #ff1744;
     box-shadow: 0 0 20px #ff0000;
-    transition: box-shadow 0.15s, filter 0.15s;
+    transition: box-shadow 0.15s;
     transform: translate(-150%, -150%);
     margin-left: 40px;
     margin-top: 55px;
   }
-  #fanis.aiming {
+  .fanis.aiming {
     box-shadow: 0 0 30px #ffeb3b, 0 0 50px #ff9800;
-    filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800);
   }
 
-  /* ===== ТЕРМОМЕТР (без свечения, +25% к размеру) ===== */
+  /* ===== ТЕРМОМЕТР ===== */
   .thermo {
     position: absolute;
     background-image: url('https://images4.imgbox.com/de/4c/vfiBWV4R_o.png');
@@ -140,6 +139,61 @@
   }
   #minimap canvas { width: 100%; height: 100%; display: block; }
 
+  /* ===== ГЛАВНОЕ МЕНЮ ===== */
+  #menu {
+    position: absolute; inset: 0;
+    background: rgba(10, 10, 15, 0.95);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    backdrop-filter: blur(5px);
+  }
+  #menu h1 {
+    font-size: 32px;
+    color: #ff1744;
+    text-shadow: 0 0 20px #ff0000;
+    text-align: center;
+  }
+  #menu .subtitle {
+    color: #aaa;
+    font-size: 16px;
+  }
+  .diff-btn, #sound-btn {
+    background: #222;
+    border: 2px solid #555;
+    color: #fff;
+    padding: 12px 30px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 200px;
+  }
+  .diff-btn:hover, .diff-btn.active {
+    background: #ff1744;
+    border-color: #ff5252;
+    box-shadow: 0 0 15px #ff1744;
+  }
+  #sound-btn { min-width: 240px; margin-top: 10px; }
+  #sound-btn:hover { background: #333; }
+  
+  #start-btn {
+    margin-top: 20px;
+    background: #4fc3f7;
+    color: #000;
+    border: none;
+    padding: 15px 60px;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  #start-btn:active { transform: scale(0.95); }
+
   #message {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -157,8 +211,6 @@
     color: #000; font-weight: bold;
     min-width: 180px; touch-action: manipulation;
   }
-  #message button:hover { background: #29b6f6; }
-  #message button:active { transform: scale(0.96); }
 
   #joystick {
     position: absolute;
@@ -193,7 +245,6 @@
     text-shadow: 0 0 4px #000;
     touch-action: none; cursor: pointer; user-select: none;
   }
-  #dashBtn:active { background: rgba(255,23,68,0.8); transform: scale(0.95); }
   #dashBtn.cooling { opacity: 0.4; }
   body.touch #joystick { display: block; }
   body.touch #dashBtn { display: flex; }
@@ -208,7 +259,10 @@
     #message { font-size: 20px; padding: 20px 24px; }
     #message button { font-size: 17px; padding: 12px 28px; }
     #player { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
-    #fanis { width: 68px; height: 94px; margin-left: 34px; margin-top: 47px; }
+    .fanis { width: 68px; height: 94px; margin-left: 34px; margin-top: 47px; }
+    #menu h1 { font-size: 24px; }
+    .diff-btn, #sound-btn { padding: 10px 20px; font-size: 16px; min-width: 160px; }
+    #sound-btn { min-width: 200px; }
   }
 
   #hint {
@@ -226,17 +280,33 @@
 <div id="viewport">
   <div id="world">
     <div id="player"></div>
-    <div id="fanis"></div>
   </div>
   <div id="ui">
-    <div id="score-big"> <span id="score">0</span> очков</div>
-    <div><span id="onfield"></span></div>
-    <div>время <span id="timer">0.0</span> с</div>
+    <div id="score-big"> <span id="score">0</span> очков реальна</div>
+    <div> <span id="onfield">0</span> на поле</div>
+    <div> <span id="timer">0.0</span> с</div>
   </div>
   <div id="minimap"><canvas id="mmcanvas" width="170" height="128"></canvas></div>
+  
+  <div id="menu">
+    <h1>ДОМОЙ ОТ ФАНИСА</h1>
+    <div class="subtitle">Собери термометры и не стань лошком</div>
+    <div style="margin-top: 20px; font-weight: bold;">Выбери количество Фанисов:</div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+      <button class="diff-btn active" data-count="1">1 Фанис</button>
+      <button class="diff-btn" data-count="2">2 Фаниса</button>
+      <button class="diff-btn" data-count="3">3 Фаниса</button>
+      <button class="diff-btn" data-count="5">5 Фанисов</button>
+    </div>
+    
+    <button id="sound-btn">🔊 Звук: ВКЛ</button>
+    <button id="start-btn">НАЧАТЬ фаниса</button>
+  </div>
+
   <div id="message"></div>
   <div id="joystick"><div id="stick"></div></div>
-  <div id="dashBtn">двинуть</div>
+  <div id="dashBtn">двинуть
+  резка</div>
   <div id="hint">Стрелки/WASD — движение • Пробел — рывок</div>
 </div>
 
@@ -245,7 +315,6 @@
   const viewport = document.getElementById('viewport');
   const world = document.getElementById('world');
   const player = document.getElementById('player');
-  const fanis = document.getElementById('fanis');
   const scoreEl = document.getElementById('score');
   const onfieldEl = document.getElementById('onfield');
   const timerEl = document.getElementById('timer');
@@ -255,11 +324,148 @@
   const joystick = document.getElementById('joystick');
   const stick = document.getElementById('stick');
   const dashBtn = document.getElementById('dashBtn');
+  const menu = document.getElementById('menu');
+  const startBtn = document.getElementById('start-btn');
+  const diffBtns = document.querySelectorAll('.diff-btn');
+  const soundBtn = document.getElementById('sound-btn');
 
+  // ==========================================
+  // ==== ИСПРАВЛЕННАЯ АУДИО СИСТЕМА ====
+  // ==========================================
+  let audioCtx = null;
+  let soundEnabled = true;
+  let bgMusicNode = null;
+  let bgOsc = null;
+  let bgFilter = null;
+  
+  const audioElements = {};
+  
+  // Ссылка на твой звук
+  const SOUNDS = {
+    shoot: 'https://github.com/fgffygfg97-commits/Mp3-brathar/raw/main/476741__cjdeets__shotscifipowerdownbuildshorthighs.wav'
+  };
+
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    // Предзагрузка звуков через Audio объект
+    for (const key in SOUNDS) {
+      if (!audioElements[key]) {
+        const a = new Audio();
+        a.crossOrigin = "anonymous";
+        a.src = SOUNDS[key];
+        a.load();
+        audioElements[key] = a;
+      }
+    }
+  }
+
+  function playSound(name, volume = 0.5) {
+    if (!soundEnabled) return;
+    if (!audioElements[name]) initAudio();
+    
+    const a = audioElements[name];
+    if (a) {
+      const clone = a.cloneNode();
+      clone.volume = Math.min(1, Math.max(0, volume));
+      clone.play().catch(e => console.log('Ошибка аудио:', e));
+    }
+  }
+
+  function playTone(freq, type, duration, vol, slideTo = null, filterFreq = null) {
+    if (!soundEnabled || !audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    let nodeToConnect = gain;
+    if (filterFreq) {
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = filterFreq;
+      gain.connect(filter);
+      nodeToConnect = filter;
+    }
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, audioCtx.currentTime + duration);
+    
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    
+    osc.connect(gain);
+    nodeToConnect.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }
+
+  function startBgMusic() {
+    if (!soundEnabled || !audioCtx || bgOsc) return;
+    
+    bgOsc = audioCtx.createOscillator();
+    bgMusicNode = audioCtx.createGain();
+    bgFilter = audioCtx.createBiquadFilter();
+    
+    bgOsc.type = 'sawtooth';
+    bgOsc.frequency.setValueAtTime(40, audioCtx.currentTime);
+    
+    bgFilter.type = 'lowpass';
+    bgFilter.frequency.value = 100;
+    
+    bgMusicNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.frequency.value = 0.15;
+    lfoGain.gain.value = 5;
+    lfo.connect(lfoGain);
+    lfoGain.connect(bgOsc.frequency);
+    
+    bgOsc.connect(bgMusicNode);
+    bgMusicNode.connect(bgFilter);
+    bgFilter.connect(audioCtx.destination);
+    
+    lfo.start();
+    bgOsc.start();
+  }
+
+  function stopBgMusic() {
+    if (bgOsc) { bgOsc.stop(); bgOsc.disconnect(); bgOsc = null; }
+    if (bgMusicNode) { bgMusicNode.disconnect(); bgMusicNode = null; }
+    if (bgFilter) { bgFilter.disconnect(); bgFilter = null; }
+  }
+
+  // Разблокировка звука при первом клике
+  document.body.addEventListener('click', () => {
+    initAudio();
+    if (soundEnabled) startBgMusic();
+  }, { once: true });
+
+  soundBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    initAudio();
+    soundEnabled = !soundEnabled;
+    soundBtn.textContent = soundEnabled ? '🔊 Звук: ВКЛ' : '🔇 Звук: ВЫКЛ';
+    if (soundEnabled) {
+      startBgMusic();
+      playTone(440, 'sine', 0.2, 0.05, 880, 1000);
+    } else {
+      stopBgMusic();
+    }
+  });
+
+  // ==========================================
+  // ==== КОНСТАНТЫ И ЛОГИКА ====
+  // ==========================================
   const W = 2400, H = 1800;
   const P_SIZE = 56, F_SIZE = 80;
   const THERMO_ON_FIELD = 12;
   const T = 30;
+
+  let fanisCount = 1;
 
   const WALLS = [];
   function wall(x, y, w, h) { WALLS.push({ x, y, w, h }); }
@@ -294,16 +500,14 @@
 
   let px = 120, py = 120;
   let pvx = 0, pvy = 0;
-  let fx = W - 200, fy = H - 200;
   let score = 0;
   let running = false, startTime = null, lastTime = 0;
   let thermos = [], bullets = [];
-  let shootCooldown = 0;
+  let fanises = [];
   let dashCooldown = 0, dashActive = 0;
   let dashDir = { x: 0, y: 0 };
   let camX = 0, camY = 0;
   let rafId = 0;
-  let aimFlashTimer = 0;
 
   const keys = Object.create(null);
   let joyActive = false, joyVX = 0, joyVY = 0;
@@ -336,8 +540,7 @@
       const d2 = (x4 - x3) * (y2 - y3) - (y4 - y3) * (x2 - x3);
       const d3 = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
       const d4 = (x2 - x1) * (y4 - y1) - (y2 - y1) * (x4 - x1);
-      return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
-             ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+      return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
     }
     const x2 = rect.x + rect.w, y2 = rect.y + rect.h;
     return segSeg(ax, ay, bx, by, rect.x, rect.y, x2, rect.y) ||
@@ -477,8 +680,6 @@
   }
 
   const VALUES = [5, 10, 15, 20, 30];
-  
-  // Увеличил базовые размеры на 25% (было 40+15, стало 50+18)
   function randomThermoStyle() {
     const w = 50 + Math.floor(Math.random() * 18);
     const h = w * (2.0 + Math.random() * 0.4);
@@ -495,7 +696,13 @@
       const rr = Math.max(style.w, style.h) / 2 + 4;
       if (hitsWall(cx, cy, rr)) continue;
       if (Math.hypot(cx - (px + P_SIZE/2), cy - (py + P_SIZE/2)) < 150) continue;
-      if (Math.hypot(cx - (fx + F_SIZE/2), cy - (fy + F_SIZE/2)) < 250) continue;
+      
+      let nearFanis = false;
+      for (const f of fanises) {
+        if (Math.hypot(cx - (f.x + F_SIZE/2), cy - (f.y + F_SIZE/2)) < 250) { nearFanis = true; break; }
+      }
+      if (nearFanis) continue;
+
       let near = false;
       for (const t of thermos) {
         if (Math.hypot(cx - (t.x + t.style.w/2), cy - (t.y + t.style.h/2)) < 110) { near = true; break; }
@@ -508,7 +715,6 @@
       el.style.height = style.h + 'px';
       el.style.left = x + 'px';
       el.style.top = y + 'px';
-      // Свечение (filter) убрано
       world.appendChild(el);
       thermos.push({ x, y, style, el });
       return true;
@@ -529,18 +735,47 @@
     onfieldEl.textContent = '0';
   }
 
+  function spawnFanises(count) {
+    fanises.forEach(f => f.el.remove());
+    fanises = [];
+    
+    for (let i = 0; i < count; i++) {
+      let sx, sy;
+      let attempts = 0;
+      do {
+        sx = 100 + Math.random() * (W - 200);
+        sy = 100 + Math.random() * (H - 200);
+        attempts++;
+      } while (hitsWall(sx, sy, F_SIZE / 2) && attempts < 100);
+
+      const el = document.createElement('div');
+      el.className = 'fanis';
+      el.style.left = sx + 'px';
+      el.style.top = sy + 'px';
+      world.appendChild(el);
+
+      fanises.push({
+        x: sx, y: sy, el: el,
+        path: [], pathIndex: 0, pathTimer: 0,
+        shootCooldown: 0, aimTimer: 0,
+        speed: 2.7 + Math.random() * 0.2
+      });
+    }
+  }
+
   function resetGame() {
+    initAudio();
+    if (soundEnabled) startBgMusic();
+
     for (const k in keys) delete keys[k];
     joyActive = false; joyVX = 0; joyVY = 0;
     stick.style.transform = '';
 
     px = 120; py = 120; pvx = 0; pvy = 0;
-    fx = W - 200; fy = H - 200;
     score = 0; scoreEl.textContent = '0';
     startTime = null; running = true;
-    shootCooldown = 0; dashCooldown = 0; dashActive = 0;
-    aimFlashTimer = 0;
-    fanis.classList.remove('aiming');
+    dashCooldown = 0; dashActive = 0;
+    
     bullets.forEach(b => b.el.remove());
     bullets = [];
     clearThermos();
@@ -548,9 +783,9 @@
 
     buildWalls();
     walkCache.clear();
-    fanisPath = []; pathIndex = 0; pathRecalcTimer = 0;
-    fanis.style.left = (fx + F_SIZE/2) + 'px';
-    fanis.style.top = (fy + F_SIZE/2) + 'px';
+    
+    spawnFanises(fanisCount);
+    
     player.style.left = (px + P_SIZE/2) + 'px';
     player.style.top = (py + P_SIZE/2) + 'px';
     player.style.opacity = '1';
@@ -580,49 +815,46 @@
     applyCamera();
   }
 
-  let fanisPath = []; let pathIndex = 0; let pathRecalcTimer = 0;
-
-  function moveFanis(dt) {
-    pathRecalcTimer -= dt;
-    if (pathRecalcTimer <= 0 || fanisPath.length === 0 || pathIndex >= fanisPath.length) {
+  function moveFanis(f, dt) {
+    f.pathTimer -= dt;
+    if (f.pathTimer <= 0 || f.path.length === 0 || f.pathIndex >= f.path.length) {
       const lead = 6;
       const tx = px + P_SIZE/2 + pvx * lead;
       const ty = py + P_SIZE/2 + pvy * lead;
-      fanisPath = findPath(fx + F_SIZE/2, fy + F_SIZE/2, tx, ty);
-      pathIndex = 0;
-      pathRecalcTimer = 18;
+      f.path = findPath(f.x + F_SIZE/2, f.y + F_SIZE/2, tx, ty);
+      f.pathIndex = 0;
+      f.pathTimer = 18 + Math.random() * 10;
     }
-    let remaining = 2.7 * dt;
-    while (remaining > 0 && pathIndex < fanisPath.length) {
-      const target = fanisPath[pathIndex];
-      const dx = target.x - (fx + F_SIZE/2);
-      const dy = target.y - (fy + F_SIZE/2);
+
+    let remaining = f.speed * dt;
+    while (remaining > 0 && f.pathIndex < f.path.length) {
+      const target = f.path[f.pathIndex];
+      const dx = target.x - (f.x + F_SIZE/2);
+      const dy = target.y - (f.y + F_SIZE/2);
       const d = Math.hypot(dx, dy);
-      if (d < 2) { pathIndex++; continue; }
+      if (d < 2) { f.pathIndex++; continue; }
+      
       const step = Math.min(remaining, d);
-      const obj = { x: fx, y: fy };
-      const bx = fx, by = fy;
+      const obj = { x: f.x, y: f.y };
+      const bx = f.x, by = f.y;
       tryMove(obj, (dx / d) * step, (dy / d) * step, F_SIZE / 2);
-      fx = obj.x; fy = obj.y;
-      const moved = Math.hypot(fx - bx, fy - by);
+      f.x = obj.x; f.y = obj.y;
+      
+      const moved = Math.hypot(f.x - bx, f.y - by);
       remaining -= moved;
-      if (moved < step * 0.3) pathIndex++;
+      if (moved < step * 0.3) f.pathIndex++;
       if (moved < 0.1) break;
     }
-    fanis.style.left = (fx + F_SIZE/2) + 'px';
-    fanis.style.top = (fy + F_SIZE/2) + 'px';
+    f.el.style.left = (f.x + F_SIZE/2) + 'px';
+    f.el.style.top = (f.y + F_SIZE/2) + 'px';
 
-    // Фикс хитбокса для касания (учитываем, что из-за translate спрайт смещён влево-вверх)
-    const fxReal = fx + F_SIZE/2 - 40; // Компенсация сдвига влево (margin-left 40)
-    const fyReal = fy + F_SIZE/2 - 55; // Компенсация сдвига вверх (margin-top 55)
-    
-    if (Math.hypot(px + P_SIZE/2 - (fx + F_SIZE/2), py + P_SIZE/2 - (fy + F_SIZE/2)) < (P_SIZE + F_SIZE) / 2 - 8) {
+    if (Math.hypot(px + P_SIZE/2 - (f.x + F_SIZE/2), py + P_SIZE/2 - (f.y + F_SIZE/2)) < (P_SIZE + F_SIZE) / 2 - 8) {
       gameOver('КАСАНИЕ');
     }
   }
 
-  function fanisShoot() {
-    const fcx = fx + F_SIZE/2, fcy = fy + F_SIZE/2;
+  function fanisShoot(f) {
+    const fcx = f.x + F_SIZE/2, fcy = f.y + F_SIZE/2;
     const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
     const dist = Math.hypot(pcx - fcx, pcy - fcy);
     if (dist < 1) return false;
@@ -653,6 +885,7 @@
       const vy = (nx * sin + ny * cos) * bulletSpeed;
       const bx = fcx, by = fcy;
       if (hitsWall(bx, by, 12)) continue;
+      
       const el = document.createElement('div');
       el.className = 'bullet' + (dist < 350 ? ' fast' : '');
       el.style.left = bx + 'px';
@@ -660,6 +893,9 @@
       world.appendChild(el);
       bullets.push({ x: bx, y: by, vx, vy, el });
     }
+    
+    // Твой WAV звук
+    playSound('shoot', 0.6); 
     return true;
   }
 
@@ -676,7 +912,9 @@
         let hit = false;
         for (const w of WALLS) if (circleRect(nx, ny, 12, w)) { hit = true; break; }
         if (hit || nx < -20 || nx > W + 20 || ny < -20 || ny > H + 20) {
-          b.el.remove(); bullets.splice(i, 1); removed = true; break;
+          b.el.remove(); bullets.splice(i, 1); removed = true; 
+          if (hit) playTone(80, 'triangle', 0.1, 0.05, null, 200); 
+          break;
         }
         b.x = nx; b.y = ny;
         if (Math.hypot(px + P_SIZE/2 - b.x, py + P_SIZE/2 - b.y) < P_SIZE/2 + 12) {
@@ -696,20 +934,15 @@
     lastTime = now;
     timerEl.textContent = ((now - startTime) / 1000).toFixed(1);
 
-    if (shootCooldown > 0) shootCooldown -= dt;
     if (dashCooldown > 0) {
       dashCooldown -= dt;
       if (dashCooldown <= 0) dashBtn.classList.remove('cooling');
     }
     if (dashActive > 0) dashActive -= dt;
-    if (aimFlashTimer > 0) {
-      aimFlashTimer -= dt;
-      if (aimFlashTimer <= 0) fanis.classList.remove('aiming');
-    }
 
     let mx = 0, my = 0;
-    if (keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['A'] || keys['ф'] || keys['Ф']) mx -= 1;
-    if (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['D'] || keys['в'] || keys['В']) mx += 1;
+    if (keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['А'] || keys['ф'] || keys['Ф']) mx -= 1;
+    if (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['Д'] || keys['в'] || keys['В']) mx += 1;
     if (keys['ArrowUp'] || keys['KeyW'] || keys['w'] || keys['W'] || keys['ц'] || keys['Ц']) my -= 1;
     if (keys['ArrowDown'] || keys['KeyS'] || keys['s'] || keys['S'] || keys['ы'] || keys['Ы']) my += 1;
     if (joyActive) { mx = joyVX; my = joyVY; }
@@ -723,6 +956,10 @@
     tryMove(obj, mx * speed, my * speed, P_SIZE / 2);
     px = obj.x; py = obj.y;
 
+    if (Math.hypot(px - oldPx, py - oldPy) > 1 && Math.random() < 0.08) {
+      playTone(80, 'triangle', 0.08, 0.02, null, 150);
+    }
+
     if (dt > 0.01) {
       pvx = pvx * 0.6 + ((px - oldPx) / dt) * 0.4;
       pvy = pvy * 0.6 + ((py - oldPy) / dt) * 0.4;
@@ -732,19 +969,27 @@
     player.style.top = (py + P_SIZE/2) + 'px';
     player.style.opacity = dashActive > 0 ? '0.55' : '1';
 
-    moveFanis(dt);
+    for (const f of fanises) {
+      moveFanis(f, dt);
 
-    if (shootCooldown <= 0) {
-      const fcx = fx + F_SIZE/2, fcy = fy + F_SIZE/2;
-      const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
-      const dist = Math.hypot(pcx - fcx, pcy - fcy);
-      if (dist < 900 && hasLineOfSight(fcx, fcy, pcx, pcy)) {
-        fanis.classList.add('aiming');
-        aimFlashTimer = 8;
-        const shot = fanisShoot();
-        if (shot) shootCooldown = dist < 300 ? 30 : dist < 550 ? 42 : 55;
-        else shootCooldown = 20;
-      } else shootCooldown = 15;
+      if (f.shootCooldown > 0) f.shootCooldown -= dt;
+      if (f.aimTimer > 0) {
+        f.aimTimer -= dt;
+        if (f.aimTimer <= 0) f.el.classList.remove('aiming');
+      }
+
+      if (f.shootCooldown <= 0) {
+        const fcx = f.x + F_SIZE/2, fcy = f.y + F_SIZE/2;
+        const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
+        const dist = Math.hypot(pcx - fcx, pcy - fcy);
+        if (dist < 900 && hasLineOfSight(fcx, fcy, pcx, pcy)) {
+          f.el.classList.add('aiming');
+          f.aimTimer = 8;
+          const shot = fanisShoot(f);
+          if (shot) f.shootCooldown = dist < 300 ? 30 : dist < 550 ? 42 : 55;
+          else f.shootCooldown = 20;
+        } else f.shootCooldown = 15;
+      }
     }
 
     updateBullets(dt);
@@ -758,6 +1003,9 @@
         thermos.splice(i, 1);
         score += t.style.value;
         scoreEl.textContent = score;
+        
+        playTone(1200, 'sine', 0.2, 0.08, 1800, 3000);
+        
         spawnOneThermo();
         onfieldEl.textContent = thermos.length;
       }
@@ -776,17 +1024,20 @@
     mmCtx.fillStyle = '#555';
     for (const w of WALLS) mmCtx.fillRect(w.x * s, w.y * s, Math.max(1, w.w * s), Math.max(1, w.h * s));
     
-    // Рисуем термометры на мини-карте (без tint, так как убрали цвета из стилей)
     mmCtx.fillStyle = '#ff1744'; 
     for (const t of thermos) {
       mmCtx.beginPath();
       mmCtx.arc((t.x + t.style.w/2) * s, (t.y + t.style.h/2) * s, 2.5, 0, 7);
       mmCtx.fill();
     }
+    
     mmCtx.fillStyle = '#ff5252';
-    mmCtx.beginPath();
-    mmCtx.arc((fx + F_SIZE/2) * s, (fy + F_SIZE/2) * s, 4, 0, 7);
-    mmCtx.fill();
+    for (const f of fanises) {
+      mmCtx.beginPath();
+      mmCtx.arc((f.x + F_SIZE/2) * s, (f.y + F_SIZE/2) * s, 4, 0, 7);
+      mmCtx.fill();
+    }
+    
     mmCtx.fillStyle = '#4fc3f7';
     mmCtx.beginPath();
     mmCtx.arc((px + P_SIZE/2) * s, (py + P_SIZE/2) * s, 3.5, 0, 7);
@@ -796,20 +1047,30 @@
   function gameOver(reason) {
     if (!running) return;
     running = false;
+    stopBgMusic();
+    playTone(100, 'sawtooth', 1.0, 0.15, 30, 200);
+    
     messageEl.style.display = 'block';
     const time = timerEl.textContent;
-    const reasonText = reason === 'ПУЛЯ' ? 'Тебя застрелил фаниска, лох' : 'Фанис добрался, лох';
-    messageEl.innerHTML = ` ${reasonText}<br><br>
-      ⭐ Очки: <b style="color:#ffd54f">${score}</b><br>
-      ⏱️ Время: ${time} с<br><br>
-      <button id="restart">Играть снова</button>`;
-    document.getElementById('restart').onclick = resetGame;
+    const reasonText = reason === 'ПУЛЯ' ? 'Тебя Бах Бах браток' : 'Фанис тут, ты труп';
+    messageEl.innerHTML = `-_- ${reasonText}<br><br>
+       Очки: <b style="color:#ffd54f">${score}</b><br>
+       Время: ${time} с<br><br>
+      <button id="restart">В главное меню</button>`;
+    document.getElementById('restart').onclick = () => {
+      messageEl.style.display = 'none';
+      menu.style.display = 'flex';
+      running = false;
+    };
   }
 
   window.addEventListener('keydown', e => {
     keys[e.code || e.key] = true;
     if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
-      if (running && dashCooldown <= 0) doDash();
+      if (running && dashCooldown <= 0) {
+        doDash();
+        playTone(200, 'triangle', 0.2, 0.06, 500, 800);
+      }
       e.preventDefault(); return;
     }
     if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
@@ -884,7 +1145,13 @@
     stick.style.transform = `translate(${dx}px, ${dy}px)`;
     joyVX = dx / max; joyVY = dy / max;
   }
-  function onDash(e) { e.preventDefault(); if (running && dashCooldown <= 0) doDash(); }
+  function onDash(e) { 
+    e.preventDefault(); 
+    if (running && dashCooldown <= 0) {
+      doDash();
+      playTone(200, 'triangle', 0.2, 0.06, 500, 800);
+    }
+  }
   dashBtn.addEventListener('touchstart', onDash, { passive: false });
   dashBtn.addEventListener('click', onDash);
 
@@ -893,7 +1160,22 @@
   document.addEventListener('gesturestart', e => e.preventDefault());
   document.addEventListener('dblclick', e => e.preventDefault());
 
-  resetGame();
+  diffBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      initAudio();
+      diffBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      fanisCount = parseInt(btn.dataset.count);
+      playTone(400, 'sine', 0.1, 0.05, 600, 1000);
+    });
+  });
+
+  startBtn.addEventListener('click', () => {
+    menu.style.display = 'none';
+    resetGame();
+  });
+
+  buildWalls();
 })();
 </script>
 </body>

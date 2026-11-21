@@ -229,14 +229,14 @@
     <div id="fanis"></div>
   </div>
   <div id="ui">
-    <div id="score-big">⭐ <span id="score">0</span> очков</div>
-    <div>🌡️ <span id="onfield">0</span> на поле</div>
-    <div>⏱️ <span id="timer">0.0</span> с</div>
+    <div id="score-big"> <span id="score">0</span> очков</div>
+    <div><span id="onfield"></span></div>
+    <div>время <span id="timer">0.0</span> с</div>
   </div>
   <div id="minimap"><canvas id="mmcanvas" width="170" height="128"></canvas></div>
   <div id="message"></div>
   <div id="joystick"><div id="stick"></div></div>
-  <div id="dashBtn">РЫВОК</div>
+  <div id="dashBtn">двинуть</div>
   <div id="hint">Стрелки/WASD — движение • Пробел — рывок</div>
 </div>
 
@@ -798,8 +798,8 @@
     running = false;
     messageEl.style.display = 'block';
     const time = timerEl.textContent;
-    const reasonText = reason === 'ПУЛЯ' ? 'Тебя настигла пуля Фаниса!' : 'Фанис до тебя добрался!';
-    messageEl.innerHTML = `💀 ${reasonText}<br><br>
+    const reasonText = reason === 'ПУЛЯ' ? 'Тебя застрелил фаниска, лох' : 'Фанис добрался, лох';
+    messageEl.innerHTML = ` ${reasonText}<br><br>
       ⭐ Очки: <b style="color:#ffd54f">${score}</b><br>
       ⏱️ Время: ${time} с<br><br>
       <button id="restart">Играть снова</button>`;

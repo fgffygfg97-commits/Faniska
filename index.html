@@ -378,6 +378,26 @@
         <button class="skin-btn" data-type="fanis" data-dir="1">▶</button>
       </div>
     </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Скин термометра</div>
+      <div class="skin-selector">
+        <button class="skin-btn" data-type="thermo" data-dir="-1">◀</button>
+        <div class="skin-preview" id="thermo-skin-preview"></div>
+        <span id="thermo-skin-name" class="skin-name">Стандарт</span>
+        <button class="skin-btn" data-type="thermo" data-dir="1">▶</button>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Скин пули</div>
+      <div class="skin-selector">
+        <button class="skin-btn" data-type="bullet" data-dir="-1">◀</button>
+        <div class="skin-preview" id="bullet-skin-preview"></div>
+        <span id="bullet-skin-name" class="skin-name">Стандарт</span>
+        <button class="skin-btn" data-type="bullet" data-dir="1">▶</button>
+      </div>
+    </div>
     
     <button id="sound-btn">🔊 Звук: ВКЛ</button>
     <button id="start-btn">НАЧАТЬ Фаниса</button>
@@ -397,7 +417,7 @@
   const PLAYER_SKINS = [
     { name: "Вамин", url: "https://images4.imgbox.com/18/76/82TfLIKI_o.png" },
     { name: "Шакалистый", url: "https://thumbs4.imgbox.com/2e/55/slKjD8FV_t.png" },
-   { name : "Тамерлан великий", url: "https://thumbs4.imgbox.com/78/ad/1yk6pSql_t.jpg" },
+    { name: "Тамерлан великий", url: "https://thumbs4.imgbox.com/78/ad/1yk6pSql_t.jpg" },
     { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" } 
   ];
   
@@ -405,13 +425,27 @@
     { name: "Фанисный", url: "https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png" },
     { name: "Фанисла", url: "https://thumbs4.imgbox.com/b9/06/0jWeRdBn_t.jpg" },
     { name: "Гулнар", url: "https://thumbs4.imgbox.com/5a/53/tCvnYTgc_t.png" },
-    { name: "Шаканис?", url: "https://thumbs4.imgbox.com/08/58/iJCWzISm_t.jpg"},
-   { name: "68", url: "https://thumbs4.imgbox.com/4f/88/9bXUINvP_t.png" },
+    { name: "Шаканис?", url: "https://thumbs4.imgbox.com/08/58/iJCWzISm_t.jpg" },
+    { name: "68", url: "https://thumbs4.imgbox.com/4f/88/9bXUINvP_t.png" },
     { name: " Рандомка", url: "https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png" }
+  ];
+
+  // ===== НОВЫЕ МАССИВЫ ДЛЯ ТЕРМОМЕТРА И ПУЛИ =====
+  const THERMO_SKINS = [
+    { name: "Стандарт", url: "https://images4.imgbox.com/de/4c/vfiBWV4R_o.png" },
+    { name: "Новый термометр", url: "ВСТАВЬТЕ_СЮДА_ССЫЛКУ_НА_ТЕРМОМЕТР" } // <-- ЗАМЕНИТЕ ЭТУ ССЫЛКУ
+  ];
+
+  const BULLET_SKINS = [
+    { name: "Стандарт", url: "https://images4.imgbox.com/6c/22/QUZMdjdM_o.png" },
+   { name: "да", url: "https://thumbs4.imgbox.com/8e/d2/GzgIoexy_t.jpg" },
+    { name: "сладость", url: "https://thumbs4.imgbox.com/8e/d2/GzgIoexy_t.jpg" } // <-- ЗАМЕНИТЕ ЭТУ ССЫЛКУ
   ];
 
   let currentPlayerSkinIdx = 0;
   let currentFanisSkinIdx = 0;
+  let currentThermoSkinIdx = 0;   // Индекс скина термометра
+  let currentBulletSkinIdx = 0;   // Индекс скина пули
   let fanisCount = 3;
 
   // ===== ЛУЧШИЙ СЧЕТ (LOCALSTORAGE) =====
@@ -761,7 +795,8 @@
       el.className = 'thermo';
       el.style.width = style.w + 'px'; el.style.height = style.h + 'px';
       el.style.left = x + 'px'; el.style.top = y + 'px';
-      el.style.backgroundImage = `url('https://images4.imgbox.com/de/4c/vfiBWV4R_o.png')`;
+      // === ИСПОЛЬЗУЕМ ВЫБРАННЫЙ СКИН ТЕРМОМЕТРА ===
+      el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
       world.appendChild(el);
       thermos.push({ x, y, style, el });
       return true;
@@ -820,26 +855,45 @@
     }
   }
 
+  // === ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ВСЕХ СКИНОВ ===
   function updateSkinUI() {
     const pSkin = PLAYER_SKINS[currentPlayerSkinIdx];
     const fSkin = FANIS_SKINS[currentFanisSkinIdx];
+    const tSkin = THERMO_SKINS[currentThermoSkinIdx];
+    const bSkin = BULLET_SKINS[currentBulletSkinIdx];
+
     document.getElementById('player-skin-preview').style.backgroundImage = `url('${pSkin.url}')`;
     document.getElementById('player-skin-name').textContent = pSkin.name;
+    
     document.getElementById('fanis-skin-preview').style.backgroundImage = `url('${fSkin.url}')`;
     document.getElementById('fanis-skin-name').textContent = fSkin.name;
+    
+    document.getElementById('thermo-skin-preview').style.backgroundImage = `url('${tSkin.url}')`;
+    document.getElementById('thermo-skin-name').textContent = tSkin.name;
+    
+    document.getElementById('bullet-skin-preview').style.backgroundImage = `url('${bSkin.url}')`;
+    document.getElementById('bullet-skin-name').textContent = bSkin.name;
+    
     player.style.backgroundImage = `url('${pSkin.url}')`;
   }
 
+  // === УНИВЕРСАЛЬНЫЙ ОБРАБОТЧИК КНОПОК СКИНОВ ===
   document.querySelectorAll('.skin-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       initAudio();
       const type = btn.dataset.type;
       const dir = parseInt(btn.dataset.dir);
+      
       if (type === 'player') {
         currentPlayerSkinIdx = (currentPlayerSkinIdx + dir + PLAYER_SKINS.length) % PLAYER_SKINS.length;
-      } else {
+      } else if (type === 'fanis') {
         currentFanisSkinIdx = (currentFanisSkinIdx + dir + FANIS_SKINS.length) % FANIS_SKINS.length;
+      } else if (type === 'thermo') {
+        currentThermoSkinIdx = (currentThermoSkinIdx + dir + THERMO_SKINS.length) % THERMO_SKINS.length;
+      } else if (type === 'bullet') {
+        currentBulletSkinIdx = (currentBulletSkinIdx + dir + BULLET_SKINS.length) % BULLET_SKINS.length;
       }
+      
       updateSkinUI();
       playTone(400, 'sine', 0.1, 0.05, 600, 1000);
     });
@@ -989,7 +1043,8 @@
       const el = document.createElement('div');
       el.className = 'bullet' + (count > 1 ? ' fast' : '');
       el.style.left = fcx + 'px'; el.style.top = fcy + 'px';
-      el.style.backgroundImage = `url('https://images4.imgbox.com/6c/22/QUZMdjdM_o.png')`;
+      // === ИСПОЛЬЗУЕМ ВЫБРАННЫЙ СКИН ПУЛИ ===
+      el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
       world.appendChild(el);
       bullets.push({ x: fcx, y: fcy, vx, vy, el });
     }
@@ -1145,7 +1200,6 @@
     stopBgMusic();
     playTone(100, 'sawtooth', 1.0, 0.15, 30, 200);
     
-    // Обновляем лучший счет, если текущий выше
     if (score > bestScore) {
       bestScore = score;
       localStorage.setItem('fanisGameBestScore', bestScore);

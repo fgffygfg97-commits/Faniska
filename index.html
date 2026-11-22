@@ -35,7 +35,7 @@
     box-sizing: border-box; 
   }
 
-  /* ===== ИГРОК ===== */
+  /* ===== ИГРОК (ПОДСВЕТКА УБРАНА) ===== */
   #player {
     position: absolute;
     width: 56px; height: 56px;
@@ -46,11 +46,9 @@
     transform: translate(-150%, -150%);
     margin-left: 28px;
     margin-top: 28px;
-    filter: drop-shadow(0 0 8px rgba(79, 195, 247, 0.6));
-    transition: filter 0.2s;
   }
 
-  /* ===== ФАНИСЫ ===== */
+  /* ===== ФАНИСЫ (ПОДСВЕТКА ОСТАЛАСЬ) ===== */
   .fanis {
     position: absolute;
     width: 80px; height: 110px;
@@ -107,17 +105,24 @@
     top: max(8px, env(safe-area-inset-top));
     left: 8px; right: 8px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 16px; z-index: 30;
+    font-size: 15px; z-index: 30;
     text-shadow: 0 0 6px #000;
     pointer-events: none; flex-wrap: wrap; gap: 6px;
   }
-  #score-big {
-    font-size: 20px; font-weight: bold; color: #ffd54f;
-    text-shadow: 0 0 8px #ff8f00, 0 0 3px #000;
+  .ui-badge {
     background: rgba(0,0,0,0.4);
     padding: 6px 12px;
     border-radius: 20px;
     backdrop-filter: blur(4px);
+    display: flex; align-items: center; gap: 6px;
+  }
+  #score-big {
+    font-size: 18px; font-weight: bold; color: #ffd54f;
+    text-shadow: 0 0 8px #ff8f00, 0 0 3px #000;
+  }
+  #best-score-ui {
+    color: #4fc3f7;
+    font-weight: bold;
   }
 
   #minimap {
@@ -146,7 +151,7 @@
   }
   #minimap canvas { width: 100%; height: 100%; display: block; }
 
-  /* ===== ГЛАВНОЕ МЕНЮ (УЛУЧШЕНО) ===== */
+  /* ===== ГЛАВНОЕ МЕНЮ ===== */
   #menu {
     position: absolute; inset: 0;
     background: rgba(10, 10, 15, 0.92);
@@ -196,164 +201,108 @@
     font-weight: bold;
   }
 
-  .diff-container {
-    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  /* Стили для ползунка */
+  .slider-container {
+    display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;
   }
-  .diff-btn {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    padding: 10px 16px;
-    font-size: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    flex: 1;
-    min-width: 70px;
-    text-align: center;
+  input[type=range] {
+    -webkit-appearance: none; width: 100%; height: 8px; border-radius: 4px;
+    background: rgba(255,255,255,0.15); outline: none; cursor: pointer;
   }
-  .diff-btn:hover { background: rgba(255,255,255,0.15); }
-  .diff-btn.active {
-    background: #ff1744;
-    border-color: #ff5252;
-    box-shadow: 0 0 15px rgba(255, 23, 68, 0.4);
-    font-weight: bold;
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #ff1744; cursor: pointer; box-shadow: 0 0 12px rgba(255, 23, 68, 0.6);
+    transition: transform 0.1s;
+  }
+  input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
+  input[type=range]::-moz-range-thumb {
+    width: 24px; height: 24px; border-radius: 50%; border: none;
+    background: #ff1744; cursor: pointer; box-shadow: 0 0 12px rgba(255, 23, 68, 0.6);
+  }
+  #fanis-count-display {
+    font-size: 20px; font-weight: bold; color: #ff5252;
+    text-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
   }
 
   /* Выбор скинов */
   .skin-selector {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    justify-content: center;
+    display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center;
   }
   .skin-btn {
     background: rgba(79, 195, 247, 0.2);
     border: 1px solid #4fc3f7;
     color: #4fc3f7;
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
   }
   .skin-btn:hover { background: #4fc3f7; color: #000; }
   .skin-btn:active { transform: scale(0.9); }
   
   .skin-preview {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    border: 2px solid #4fc3f7;
-    background-size: cover;
-    background-position: center;
-    background-color: #222;
+    width: 44px; height: 44px; border-radius: 50%; border: 2px solid #4fc3f7;
+    background-size: cover; background-position: center; background-color: #222;
     box-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
   }
   .skin-name {
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    min-width: 100px;
-    text-align: center;
+    font-size: 16px; font-weight: bold; color: #fff; min-width: 100px; text-align: center;
   }
 
   #sound-btn {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    max-width: 360px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; padding: 12px; font-size: 16px; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s; width: 100%; max-width: 360px;
     display: flex; align-items: center; justify-content: center; gap: 8px;
   }
   #sound-btn:hover { background: rgba(255,255,255,0.15); }
 
   #start-btn {
-    margin-top: 10px;
-    background: linear-gradient(135deg, #4fc3f7, #0288d1);
-    color: #fff;
-    border: none;
-    padding: 16px 60px;
-    font-size: 22px;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4);
-    letter-spacing: 1px;
-    width: 100%;
-    max-width: 360px;
+    margin-top: 10px; background: linear-gradient(135deg, #4fc3f7, #0288d1);
+    color: #fff; border: none; padding: 16px 60px; font-size: 22px; font-weight: bold;
+    border-radius: 12px; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4); letter-spacing: 1px;
+    width: 100%; max-width: 360px;
   }
   #start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(79, 195, 247, 0.6); }
   #start-btn:active { transform: translateY(0) scale(0.98); }
 
   /* ===== СООБЩЕНИЯ ===== */
   #message {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 22px; text-align: center;
-    z-index: 40; display: none;
-    background: rgba(10, 10, 15, 0.96);
-    padding: 30px 36px; border-radius: 16px;
-    border: 2px solid #ff1744;
-    box-shadow: 0 0 40px rgba(255, 23, 68, 0.3);
-    max-width: 92%; max-height: 90%; overflow-y: auto;
-    touch-action: pan-y;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 22px; text-align: center; z-index: 40; display: none;
+    background: rgba(10, 10, 15, 0.96); padding: 30px 36px; border-radius: 16px;
+    border: 2px solid #ff1744; box-shadow: 0 0 40px rgba(255, 23, 68, 0.3);
+    max-width: 92%; max-height: 90%; overflow-y: auto; touch-action: pan-y;
     backdrop-filter: blur(10px);
   }
   #message button {
-    margin-top: 20px; padding: 14px 36px;
-    font-size: 18px; cursor: pointer;
-    background: linear-gradient(135deg, #4fc3f7, #0288d1);
-    border: none; border-radius: 8px;
-    color: #fff; font-weight: bold;
-    min-width: 200px; touch-action: manipulation;
+    margin-top: 20px; padding: 14px 36px; font-size: 18px; cursor: pointer;
+    background: linear-gradient(135deg, #4fc3f7, #0288d1); border: none; border-radius: 8px;
+    color: #fff; font-weight: bold; min-width: 200px; touch-action: manipulation;
     transition: transform 0.1s;
   }
   #message button:active { transform: scale(0.95); }
 
   /* ===== УПРАВЛЕНИЕ ===== */
   #joystick {
-    position: absolute;
-    bottom: calc(20px + env(safe-area-inset-bottom));
-    left: 20px;
-    width: 130px; height: 130px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
-    border: 2px solid rgba(255,255,255,0.2);
-    z-index: 35; display: none; touch-action: none;
-    backdrop-filter: blur(4px);
+    position: absolute; bottom: calc(20px + env(safe-area-inset-bottom)); left: 20px;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.2);
+    z-index: 35; display: none; touch-action: none; backdrop-filter: blur(4px);
   }
   #stick {
-    position: absolute; top: 50%; left: 50%;
-    width: 56px; height: 56px;
-    margin-left: -28px; margin-top: -28px;
-    background: rgba(79,195,247,0.6);
+    position: absolute; top: 50%; left: 50%; width: 56px; height: 56px;
+    margin-left: -28px; margin-top: -28px; background: rgba(79,195,247,0.6);
     border-radius: 50%; border: 2px solid #b3e5fc;
-    box-shadow: 0 0 15px rgba(79, 195, 247, 0.5);
-    pointer-events: none; will-change: transform;
+    box-shadow: 0 0 15px rgba(79, 195, 247, 0.5); pointer-events: none; will-change: transform;
   }
   #dashBtn {
-    position: absolute;
-    bottom: calc(30px + env(safe-area-inset-bottom));
-    right: 20px;
-    width: 90px; height: 90px;
-    border-radius: 50%;
-    background: rgba(255,23,68,0.3);
-    border: 2px solid rgba(255,82,82,0.8);
-    color: #fff; font-size: 14px; font-weight: bold;
-    z-index: 35; display: none;
-    align-items: center; justify-content: center;
-    text-shadow: 0 0 4px #000;
-    touch-action: none; cursor: pointer; user-select: none;
-    backdrop-filter: blur(4px);
-    transition: all 0.2s;
+    position: absolute; bottom: calc(30px + env(safe-area-inset-bottom)); right: 20px;
+    width: 90px; height: 90px; border-radius: 50%; background: rgba(255,23,68,0.3);
+    border: 2px solid rgba(255,82,82,0.8); color: #fff; font-size: 14px; font-weight: bold;
+    z-index: 35; display: none; align-items: center; justify-content: center;
+    text-shadow: 0 0 4px #000; touch-action: none; cursor: pointer; user-select: none;
+    backdrop-filter: blur(4px); transition: all 0.2s;
   }
   #dashBtn:active { transform: scale(0.9); background: rgba(255,23,68,0.5); }
   #dashBtn.cooling { opacity: 0.3; border-color: #666; background: rgba(100,100,100,0.2); }
@@ -373,21 +322,14 @@
     #player { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
     .fanis { width: 68px; height: 94px; margin-left: 34px; margin-top: 47px; }
     #menu h1 { font-size: 28px; }
-    .diff-btn { padding: 8px 12px; font-size: 14px; }
     .skin-preview { width: 38px; height: 38px; }
     .skin-name { font-size: 14px; min-width: 80px; }
   }
 
   #hint {
-    position: absolute;
-    bottom: max(10px, env(safe-area-inset-bottom));
-    right: max(12px, env(safe-area-inset-right));
-    font-size: 12px; opacity: 0.5;
-    z-index: 30; pointer-events: none; text-align: right;
-    max-width: 220px;
-    background: rgba(0,0,0,0.4);
-    padding: 8px;
-    border-radius: 6px;
+    position: absolute; bottom: max(10px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right));
+    font-size: 12px; opacity: 0.5; z-index: 30; pointer-events: none; text-align: right;
+    max-width: 220px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;
   }
   body.touch #hint { display: none; }
 </style>
@@ -398,9 +340,10 @@
     <div id="player"></div>
   </div>
   <div id="ui">
-    <div id="score-big"> <span id="score">0</span></div>
-    <div style="background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(4px);">🌡️ <span id="onfield">0</span></div>
-    <div style="background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(4px);">⏱️ <span id="timer">0.0</span></div>
+    <div class="ui-badge">лучши <span id="best-score-ui">0</span></div>
+    <div class="ui-badge" id="score-big"> <span id="score">0</span></div>
+    <div class="ui-badge">градусов <span id="onfield">0</span></div>
+    <div class="ui-badge">время <span id="timer">0.0</span></div>
   </div>
   <div id="minimap"><canvas id="mmcanvas" width="170" height="128"></canvas></div>
   
@@ -409,12 +352,10 @@
     <div class="subtitle">Собирай термометры и не фанис!</div>
     
     <div class="menu-section">
-      <div class="menu-section-title">Сложность (количество Фанисов)</div>
-      <div class="diff-container">
-        <button class="diff-btn active" data-count="1">1</button>
-        <button class="diff-btn" data-count="2">2</button>
-        <button class="diff-btn" data-count="3">3</button>
-        <button class="diff-btn" data-count="5">5</button>
+      <div class="menu-section-title">Количество Фанисов</div>
+      <div class="slider-container">
+        <input type="range" id="fanis-count-slider" min="1" max="10" value="3">
+        <span id="fanis-count-display">3 Фаниса</span>
       </div>
     </div>
 
@@ -451,22 +392,29 @@
 <script>
 (() => {
   // ==========================================
-  // ==== НАСТРОЙКИ СКИНОВ (ВСТАВЬТЕ СЮДА ВАШИ ССЫЛКИ) ====
+  // ==== НАСТРОЙКИ СКИНОВ ====
   // ==========================================
   const PLAYER_SKINS = [
     { name: "Вамин", url: "https://images4.imgbox.com/18/76/82TfLIKI_o.png" },
-    { name: "Шакалистый", url: "https://thumbs4.imgbox.com/2e/55/slKjD8FV_t.png" }, // ЗАМЕНИТЕ ЭТУ ССЫЛКУ
-    { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" }  // ЗАМЕНИТЕ ЭТУ ССЫЛКУ
+    { name: "Шакалистый", url: "https://thumbs4.imgbox.com/2e/55/slKjD8FV_t.png" },
+    { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" }
   ];
   
   const FANIS_SKINS = [
     { name: "Фанисный", url: "https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png" },
-    { name: "Фанисла", url: "https://thumbs4.imgbox.com/b9/06/0jWeRdBn_t.jpg" }, // ЗАМЕНИТЕ ЭТУ ССЫЛКУ
-    { name: "Гулнар", url: "https://thumbs4.imgbox.com/5a/53/tCvnYTgc_t.png" }    // ЗАМЕНИТЕ ЭТУ ССЫЛКУ
+    { name: "Фанисла", url: "https://thumbs4.imgbox.com/b9/06/0jWeRdBn_t.jpg" },
+    { name: "Гулнар", url: "https://thumbs4.imgbox.com/5a/53/tCvnYTgc_t.png" },
+    { name: " Рандомка", url: "https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png" }
   ];
 
   let currentPlayerSkinIdx = 0;
   let currentFanisSkinIdx = 0;
+  let fanisCount = 3;
+
+  // ===== ЛУЧШИЙ СЧЕТ (LOCALSTORAGE) =====
+  let bestScore = parseInt(localStorage.getItem('fanisGameBestScore')) || 0;
+  const bestScoreUi = document.getElementById('best-score-ui');
+  if (bestScoreUi) bestScoreUi.textContent = bestScore;
 
   const viewport = document.getElementById('viewport');
   const world = document.getElementById('world');
@@ -482,8 +430,9 @@
   const dashBtn = document.getElementById('dashBtn');
   const menu = document.getElementById('menu');
   const startBtn = document.getElementById('start-btn');
-  const diffBtns = document.querySelectorAll('.diff-btn');
   const soundBtn = document.getElementById('sound-btn');
+  const fanisSlider = document.getElementById('fanis-count-slider');
+  const fanisCountDisplay = document.getElementById('fanis-count-display');
 
   // ==========================================
   // ==== АУДИО СИСТЕМА ====
@@ -590,7 +539,6 @@
   const P_SIZE = 56, F_SIZE = 80;
   const THERMO_ON_FIELD = 12;
   const T = 30;
-  let fanisCount = 1;
 
   const WALLS = [];
   function wall(x, y, w, h) { WALLS.push({ x, y, w, h }); }
@@ -834,7 +782,8 @@
   function spawnFanises(count) {
     fanises.forEach(f => f.el.remove());
     fanises = [];
-    const skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
+    const isRandomMode = (currentFanisSkinIdx === FANIS_SKINS.length - 1);
+
     for (let i = 0; i < count; i++) {
       let sx, sy, attempts = 0;
       do {
@@ -842,11 +791,23 @@
         sy = 100 + Math.random() * (H - 200);
         attempts++;
       } while (hitsWall(sx, sy, F_SIZE / 2) && attempts < 100);
+      
       const el = document.createElement('div');
       el.className = 'fanis';
-      el.style.left = sx + 'px'; el.style.top = sy + 'px';
+      el.style.left = sx + 'px'; 
+      el.style.top = sy + 'px';
+      
+      let skinUrl;
+      if (isRandomMode) {
+        const randomIdx = Math.floor(Math.random() * (FANIS_SKINS.length - 1));
+        skinUrl = FANIS_SKINS[randomIdx].url;
+      } else {
+        skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
+      }
+      
       el.style.backgroundImage = `url('${skinUrl}')`;
       world.appendChild(el);
+      
       fanises.push({
         x: sx, y: sy, el,
         path: [], pathIndex: 0, pathTimer: 0,
@@ -856,7 +817,6 @@
     }
   }
 
-  // Обновление UI скинов
   function updateSkinUI() {
     const pSkin = PLAYER_SKINS[currentPlayerSkinIdx];
     const fSkin = FANIS_SKINS[currentFanisSkinIdx];
@@ -880,6 +840,20 @@
       updateSkinUI();
       playTone(400, 'sine', 0.1, 0.05, 600, 1000);
     });
+  });
+
+  // ===== ЛОГИКА ПОЛЗУНКА КОЛИЧЕСТВА ФАНИСОВ =====
+  function getFanisText(count) {
+    if (count === 1) return "1 Фанис";
+    if (count >= 2 && count <= 4) return `${count} Фаниса`;
+    return `${count} Фанисов`;
+  }
+
+  fanisSlider.addEventListener('input', () => {
+    fanisCount = parseInt(fanisSlider.value);
+    fanisCountDisplay.textContent = getFanisText(fanisCount);
+    initAudio();
+    playTone(400, 'sine', 0.1, 0.05, 600, 1000);
   });
 
   function resetGame() {
@@ -924,24 +898,20 @@
     applyCamera();
   }
 
-  // ===== УЛУЧШЕННЫЙ ИИ ФАНИСА =====
   function moveFanis(f, dt) {
     const fcx = f.x + F_SIZE/2, fcy = f.y + F_SIZE/2;
     const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
     const dist = Math.hypot(pcx - fcx, pcy - fcy);
     
     f.pathTimer -= dt;
-    // Пересчитываем путь реже, если игрок не двигается быстро, но чаще при рывке
     const recalcThreshold = dashActive > 0 ? 8 : (dist < 300 ? 15 : 25);
     
     if (f.pathTimer <= 0 || f.path.length === 0 || f.pathIndex >= f.path.length) {
       let tx = pcx, ty = pcy;
-      // Упреждение: если игрок делает рывок, Фанис целится далеко вперед
       const lead = dashActive > 0 ? 18 : 8;
       tx = pcx + pvx * lead;
       ty = pcy + pvy * lead;
       
-      // Если слишком близко, Фанис не лезет в упор, а держит дистанцию или стрейфит
       if (dist < 250) {
         const angle = Math.atan2(fcy - pcy, fcx - pcx);
         tx = fcx + Math.cos(angle) * 150;
@@ -988,7 +958,6 @@
 
     const bulletSpeed = 6.5;
     const travelTime = dist / bulletSpeed;
-    // Улучшенный упреждение для стрельбы
     const leadFactor = dashActive > 0 ? 1.2 : 0.85;
     const leadX = pcx + pvx * travelTime * leadFactor;
     const leadY = pcy + pvy * travelTime * leadFactor;
@@ -1004,7 +973,6 @@
     const nx = dx / d, ny = dy / d;
 
     let count = 1, spread = 0;
-    // На близкой дистанции или если игрок делает рывок, Фанис стреляет веером
     if (dist < 350 || dashActive > 0) { count = 3; spread = 0.18; }
     else if (dist < 550) { count = 2; spread = 0.1; }
 
@@ -1111,7 +1079,6 @@
           f.el.classList.add('aiming');
           f.aimTimer = 8;
           const shot = fanisShoot(f);
-          // Если игрок делает рывок, Фанис стреляет чаще
           const cooldownMod = dashActive > 0 ? 0.6 : 1;
           if (shot) f.shootCooldown = (dist < 300 ? 30 : dist < 550 ? 42 : 55) * cooldownMod;
           else f.shootCooldown = 20;
@@ -1175,11 +1142,19 @@
     stopBgMusic();
     playTone(100, 'sawtooth', 1.0, 0.15, 30, 200);
     
+    // Обновляем лучший счет, если текущий выше
+    if (score > bestScore) {
+      bestScore = score;
+      localStorage.setItem('fanisGameBestScore', bestScore);
+      if (bestScoreUi) bestScoreUi.textContent = bestScore;
+    }
+
     messageEl.style.display = 'block';
     const time = timerEl.textContent;
     const reasonText = reason === 'ПУЛЯ' ? 'Тебя фани бах!' : 'Фанис тут бах!';
     messageEl.innerHTML = `у ${reasonText}<br><br>
        Очки: <b style="color:#ffd54f; font-size: 28px;">${score}</b><br>
+       ва Лучший счет: <b style="color:#4fc3f7; font-size: 22px;">${bestScore}</b><br>
        Время: ${time} с<br><br>
       <button id="restart">В главное меню</button>`;
     document.getElementById('restart').onclick = () => {
@@ -1292,22 +1267,14 @@
   document.addEventListener('gesturestart', e => e.preventDefault());
   document.addEventListener('dblclick', e => e.preventDefault());
 
-  diffBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      initAudio();
-      diffBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      fanisCount = parseInt(btn.dataset.count);
-      playTone(400, 'sine', 0.1, 0.05, 600, 1000);
-    });
-  });
-
   startBtn.addEventListener('click', () => {
     menu.style.display = 'none';
     resetGame();
   });
 
   // Инициализация
+  fanisCount = parseInt(fanisSlider.value);
+  fanisCountDisplay.textContent = getFanisText(fanisCount);
   updateSkinUI();
   buildWalls();
 })();

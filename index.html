@@ -456,7 +456,22 @@
     transition: color 0.2s;
     font-weight: 500;
   }
-
+#reset-codes-btn {
+    background: rgba(255,69,58,0.15);
+    border: 1px solid rgba(255,69,58,0.3);
+    color: #FF453A;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.1s;
+    width: 100%;
+    font-family: var(--font);
+    letter-spacing: -0.01em;
+  }
+  #reset-codes-btn:hover { background: rgba(255,69,58,0.25); }
+  #reset-codes-btn:active { transform: scale(0.98); background: rgba(255,69,58,0.35); }
   #sound-btn {
     background: #2c2c2e;
     border: none;
@@ -708,12 +723,13 @@
             </div>
           </div>
 
-          <div class="menu-section" style="border-color: rgba(255,214,10,0.15);">
+                    <div class="menu-section" style="border-color: rgba(255,214,10,0.15);">
             <div class="menu-section-title" style="color: var(--ios-yellow);">коды вод</div>
             <input type="text" id="secret-code-input" placeholder="Введи код..." autocomplete="off">
             <button id="secret-code-btn">Актиделай</button>
             <div id="secret-code-message"></div>
-          </div>
+            <button id="reset-codes-btn">🗑 Сбросить все коды</button>
+                    </div>
         </div>
       </div>
 
@@ -1565,7 +1581,24 @@
     e.stopPropagation();
     if (e.key === 'Enter') secretCodeBtn.click();
   });
-
+  const resetCodesBtn = document.getElementById('reset-codes-btn');
+  if (resetCodesBtn) {
+    resetCodesBtn.addEventListener('click', () => {
+      initAudio();
+      if (confirm('Ты уверен? Все разблокированные коды будут забыты (лучший счёт сохранится).')) {
+        localStorage.removeItem('fanisGameUnlockedCodes');
+        currentPlayerSkinIdx = 0;
+        currentFanisSkinIdx = 0;
+        currentThermoSkinIdx = 0;
+        currentBulletSkinIdx = 0;
+        currentFloorSkinIdx = 0;
+        updateSkinUI();
+        secretCodeMsg.textContent = '✓ Все коды сброшены';
+        secretCodeMsg.style.color = '#FF453A';
+        playTone(200, 'sawtooth', 0.2, 0.08, 100, 500);
+      }
+    });
+  }
   function resetGame() {
     initAudio();
     if (soundEnabled) startBgMusic();

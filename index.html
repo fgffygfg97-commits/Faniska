@@ -7,14 +7,14 @@
 <style>
   :root {
     --ios-bg: #000000;
-    --ios-surface: rgba(28, 28, 30, 0.72);
+    --ios-surface: rgba(28, 28, 30, 0.75);
     --ios-surface-secondary: rgba(44, 44, 46, 0.6);
     --ios-surface-tertiary: rgba(58, 58, 60, 0.4);
-    --ios-separator: rgba(84, 84, 88, 0.35);
+    --ios-separator: rgba(84, 84, 88, 0.3);
     --ios-label: #ffffff;
-    --ios-label-secondary: rgba(235, 235, 245, 0.6);
+    --ios-label-secondary: rgba(235, 235, 245, 0.62);
     --ios-label-tertiary: rgba(235, 235, 245, 0.3);
-    --ios-blue: #007AFF;
+    --ios-blue: #0A84FF;
     --ios-green: #30D158;
     --ios-red: #FF453A;
     --ios-orange: #FF9F0A;
@@ -22,12 +22,12 @@
     --ios-purple: #BF5AF2;
     --ios-pink: #FF375F;
     --ios-teal: #64D2FF;
-    --ios-radius-sm: 10px;
-    --ios-radius-md: 14px;
-    --ios-radius-lg: 20px;
-    --ios-radius-xl: 28px;
-    --ios-blur: saturate(180%) blur(40px);
-    --ios-blur-heavy: saturate(200%) blur(60px);
+    --ios-radius-sm: 8px;
+    --ios-radius-md: 12px;
+    --ios-radius-lg: 16px;
+    --ios-radius-xl: 20px;
+    --ios-blur: saturate(150%) blur(20px);
+    --ios-blur-heavy: saturate(160%) blur(28px);
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   }
 
@@ -42,9 +42,9 @@
   }
   #viewport {
     position: absolute; inset: 0; overflow: hidden;
-    background: 
-      radial-gradient(ellipse at 20% 20%, rgba(88, 86, 214, 0.15), transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(255, 55, 95, 0.1), transparent 50%),
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(88, 86, 214, 0.10), transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255, 55, 95, 0.06), transparent 50%),
       radial-gradient(ellipse at 50% 50%, rgba(10, 10, 15, 1), rgba(0, 0, 0, 1));
     touch-action: none;
   }
@@ -77,7 +77,7 @@
     margin-left: 28px;
     margin-top: 28px;
     contain: style paint;
-    will-change: transform;
+    will-change: transform, left, top;
     filter: drop-shadow(0 2px 8px rgba(0,122,255,0.3));
   }
 
@@ -92,7 +92,7 @@
     margin-left: 28px;
     margin-top: 28px;
     contain: style paint;
-    will-change: transform;
+    will-change: transform, left, top;
     filter: drop-shadow(0 2px 6px rgba(100,210,255,0.3));
   }
   .ally.dead { opacity: 0.15; filter: grayscale(1) brightness(0.5); }
@@ -109,7 +109,7 @@
     box-shadow: 0 0 20px rgba(255,69,58,0.25), 0 4px 12px rgba(0,0,0,0.3);
     transform: translate(-50%, -50%);
     contain: style paint;
-    will-change: transform;
+    will-change: transform, left, top;
   }
   .fanis-type-1 { border-color: rgba(255,69,58,0.7); box-shadow: 0 0 22px rgba(255,69,58,0.3), 0 4px 12px rgba(0,0,0,0.3); }
   .fanis-type-2 { border-color: rgba(191,90,242,0.7); box-shadow: 0 0 22px rgba(191,90,242,0.35), 0 4px 12px rgba(0,0,0,0.3); }
@@ -156,7 +156,7 @@
     filter: drop-shadow(0 1px 4px rgba(255,69,58,0.3));
     transform: translate(-50%, -50%);
     contain: strict;
-    will-change: transform;
+    will-change: left, top;
     top: 0; left: 0;
   }
   .bullet.fast { filter: drop-shadow(0 1px 6px rgba(255,159,10,0.4)); }
@@ -179,13 +179,11 @@
   }
   .ui-badge {
     background: var(--ios-surface);
-    backdrop-filter: var(--ios-blur);
-    -webkit-backdrop-filter: var(--ios-blur);
-    padding: 7px 14px;
+    padding: 7px 13px;
     border-radius: 100px;
-    border: 0.5px solid var(--ios-separator);
+    border: 1px solid rgba(255,255,255,0.06);
     display: flex; align-items: center; gap: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    font-variant-numeric: tabular-nums;
   }
   #score-big {
     font-size: 16px; font-weight: 700; color: var(--ios-yellow);
@@ -193,7 +191,6 @@
   }
   #best-score-ui { color: var(--ios-teal); font-weight: 600; }
 
-  /* ===== FPS СЧЁТЧИК ===== */
   #fps-counter {
     position: absolute;
     bottom: max(12px, env(safe-area-inset-bottom));
@@ -203,15 +200,12 @@
     z-index: 30;
     pointer-events: none;
     background: var(--ios-surface);
-    backdrop-filter: var(--ios-blur);
-    -webkit-backdrop-filter: var(--ios-blur);
-    padding: 5px 10px;
+    padding: 5px 9px;
     border-radius: 100px;
-    border: 0.5px solid var(--ios-separator);
+    border: 1px solid rgba(255,255,255,0.06);
     font-variant-numeric: tabular-nums;
     color: var(--ios-label-secondary);
     letter-spacing: 0.02em;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   }
 
   #minimap {
@@ -219,14 +213,11 @@
     top: max(52px, calc(env(safe-area-inset-top) + 44px));
     right: max(12px, env(safe-area-inset-right));
     width: 160px; height: 120px;
-    background: var(--ios-surface);
-    border: 0.5px solid var(--ios-separator);
+    background: rgba(20, 20, 22, 0.9);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--ios-radius-md);
     z-index: 25;
     overflow: hidden; pointer-events: none;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    backdrop-filter: var(--ios-blur);
-    -webkit-backdrop-filter: var(--ios-blur);
   }
   #minimap::before {
     content: "КАРТА";
@@ -241,67 +232,63 @@
   }
   #minimap canvas { width: 100%; height: 100%; display: block; }
 
+  /* ========== ГЛАВНОЕ МЕНЮ ========== */
   #menu {
     position: absolute; inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: #0e0e10;
     z-index: 100;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     align-items: center;
-    backdrop-filter: var(--ios-blur-heavy);
-    -webkit-backdrop-filter: var(--ios-blur-heavy);
-    padding: 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
-    overflow-y: auto;
-    touch-action: pan-y;
+    overflow: hidden;
   }
-  
+
   .menu-content {
     width: 100%;
-    max-width: 400px;
+    max-width: 440px;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    padding:
+      calc(16px + env(safe-area-inset-top, 0px))
+      16px
+      calc(16px + env(safe-area-inset-bottom, 0px));
     gap: 12px;
-    padding-bottom: 8px;
+    overflow: hidden;
   }
 
   #menu .menu-header {
+    flex-shrink: 0;
     text-align: center;
-    padding: 8px 0 4px;
+    padding: 4px 0 6px;
   }
   #menu h1 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 800;
     color: var(--ios-label);
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #FF453A, #FF375F, #BF5AF2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
   }
   #menu .subtitle {
     color: var(--ios-label-secondary);
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     margin-top: 6px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.005em;
   }
 
-  /* ===== ТАБЫ ===== */
   .menu-tabs {
+    flex-shrink: 0;
     display: flex;
     width: 100%;
-    background: rgba(120,120,128,0.16);
+    background: #1c1c1e;
     border-radius: 10px;
-    padding: 2px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    padding: 3px;
+    gap: 2px;
   }
   .menu-tab {
     flex: 1;
-    padding: 8px 12px;
+    padding: 9px 12px;
     background: transparent;
     border: none;
     color: var(--ios-label-secondary);
@@ -309,30 +296,53 @@
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.12s, color 0.12s;
     font-family: var(--font);
     letter-spacing: -0.01em;
   }
   .menu-tab.active {
-    background: rgba(255,255,255,0.95);
-    color: #000;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    background: #3a3a3c;
+    color: #fff;
   }
-  .menu-tab-content { display: none; flex-direction: column; gap: 12px; }
+  .menu-tab:active {
+    background: #2c2c2e;
+  }
+
+  /* Скроллируемая область контента вкладок */
+  .menu-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 2px 1px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.15) transparent;
+  }
+  .menu-scroll::-webkit-scrollbar { width: 4px; }
+  .menu-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+  }
+
+  .menu-tab-content { display: none; flex-direction: column; gap: 10px; }
   .menu-tab-content.active { display: flex; }
-  
+
   .menu-section {
-    background: var(--ios-surface);
-    border: 0.5px solid var(--ios-separator);
-    border-radius: var(--ios-radius-lg);
-    padding: 16px;
+    background: #1c1c1e;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 14px;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    backdrop-filter: var(--ios-blur);
-    -webkit-backdrop-filter: var(--ios-blur);
   }
   .menu-section-title {
     font-size: 11px;
@@ -352,90 +362,95 @@
     background: rgba(120,120,128,0.36); outline: none; cursor: pointer;
   }
   input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%;
+    -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%;
     background: #ffffff; cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     transition: transform 0.15s ease;
   }
-  input[type=range]::-webkit-slider-thumb:active { transform: scale(1.15); }
+  input[type=range]::-webkit-slider-thumb:active { transform: scale(1.12); }
   input[type=range]::-moz-range-thumb {
-    width: 28px; height: 28px; border-radius: 50%; border: none;
+    width: 26px; height: 26px; border-radius: 50%; border: none;
     background: #ffffff; cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
   }
   #fanis-count-display {
-    font-size: 20px; font-weight: 700; color: var(--ios-red);
+    font-size: 19px; font-weight: 700; color: var(--ios-red);
     letter-spacing: -0.02em;
   }
   #ally-count-display {
-    font-size: 20px; font-weight: 700; color: var(--ios-teal);
+    font-size: 19px; font-weight: 700; color: var(--ios-teal);
     letter-spacing: -0.02em;
   }
 
   .skin-selector {
-    display: flex; align-items: center; gap: 14px; width: 100%; justify-content: center;
+    display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center;
   }
   .skin-btn {
-    background: var(--ios-surface-tertiary);
+    background: #2c2c2e;
     border: none;
     color: var(--ios-blue);
-    width: 36px; height: 36px; border-radius: 50%; font-size: 16px;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 15px;
     font-weight: 600;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s ease;
+    transition: background 0.12s, transform 0.1s;
     touch-action: manipulation;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    flex-shrink: 0;
   }
-  .skin-btn:hover { background: var(--ios-blue); color: #fff; }
-  .skin-btn:active { transform: scale(0.88); opacity: 0.8; }
-  
+  .skin-btn:hover { background: #3a3a3c; }
+  .skin-btn:active { transform: scale(0.9); background: #4a4a4c; }
+
   .skin-preview {
-    width: 48px; height: 48px; border-radius: 50%;
-    border: 2px solid var(--ios-separator);
-    background-size: cover; background-position: center; background-color: rgba(44,44,46,0.8);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+    background-size: cover; background-position: center; background-color: #2c2c2e;
+    flex-shrink: 0;
   }
   .skin-name {
-    font-size: 15px; font-weight: 600; color: var(--ios-label);
-    min-width: 100px; text-align: center;
+    font-size: 14px; font-weight: 600; color: var(--ios-label);
+    min-width: 90px; text-align: center;
     letter-spacing: -0.01em;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   #secret-code-input {
     width: 100%;
-    padding: 14px 16px;
-    border-radius: var(--ios-radius-sm);
-    border: none;
-    background: var(--ios-surface-tertiary);
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #0e0e10;
     color: var(--ios-yellow);
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 500;
     text-align: center;
     outline: none;
     font-family: var(--font);
     letter-spacing: 0.02em;
-    transition: background 0.2s;
+    transition: border-color 0.15s, background 0.15s;
   }
-  #secret-code-input:focus { background: rgba(58,58,60,0.6); }
+  #secret-code-input:focus {
+    background: #000;
+    border-color: rgba(255,214,10,0.4);
+  }
   #secret-code-input::placeholder { color: var(--ios-label-tertiary); }
   #secret-code-btn {
-    background: linear-gradient(135deg, var(--ios-yellow), var(--ios-orange));
+    background: var(--ios-yellow);
     border: none;
-    padding: 14px 24px;
-    border-radius: 100px;
+    padding: 13px 24px;
+    border-radius: 10px;
     color: #000;
     font-weight: 700;
     font-size: 15px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.12s, transform 0.1s;
     width: 100%;
     font-family: var(--font);
     letter-spacing: -0.01em;
-    box-shadow: 0 2px 8px rgba(255,214,10,0.2);
   }
-  #secret-code-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,214,10,0.3); }
-  #secret-code-btn:active { transform: scale(0.97); }
+  #secret-code-btn:hover { background: #e6c000; }
+  #secret-code-btn:active { transform: scale(0.98); background: #ccac00; }
   #secret-code-message {
     font-size: 13px;
     min-height: 18px;
@@ -445,126 +460,156 @@
   }
 
   #sound-btn {
-    background: var(--ios-surface);
-    border: 0.5px solid var(--ios-separator);
+    background: #2c2c2e;
+    border: none;
     color: var(--ios-label);
     padding: 14px;
     font-size: 15px;
     font-weight: 500;
-    border-radius: 100px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.12s, transform 0.1s;
     width: 100%;
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    backdrop-filter: var(--ios-blur);
-    -webkit-backdrop-filter: var(--ios-blur);
     font-family: var(--font);
+    flex-shrink: 0;
   }
-  #sound-btn:hover { background: var(--ios-surface-secondary); }
-  #sound-btn:active { transform: scale(0.97); }
+  #sound-btn:hover { background: #3a3a3c; }
+  #sound-btn:active { background: #4a4a4c; transform: scale(0.99); }
 
   #start-btn {
-    background: linear-gradient(135deg, var(--ios-blue), #5856D6);
+    flex-shrink: 0;
+    background: var(--ios-blue);
     color: #fff; border: none;
-    padding: 16px 60px; font-size: 19px; font-weight: 700;
-    border-radius: 100px; cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: 0 4px 20px rgba(0,122,255,0.3);
+    padding: 16px;
+    font-size: 17px; font-weight: 600;
+    border-radius: 14px; cursor: pointer;
+    transition: background 0.12s, transform 0.1s;
     letter-spacing: -0.01em;
     width: 100%;
     font-family: var(--font);
+    box-shadow: 0 2px 12px rgba(10,132,255,0.25);
   }
-  #start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,122,255,0.4); }
-  #start-btn:active { transform: scale(0.97); }
+  #start-btn:hover { background: #0071e3; }
+  #start-btn:active { transform: scale(0.985); background: #0060c0; }
 
+  /* ========== GAME OVER / MESSAGE ========== */
   #message {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-size: 17px; text-align: center; z-index: 40; display: none;
-    background: var(--ios-surface);
-    padding: 28px 32px;
+    background: #1c1c1e;
+    padding: 28px 28px;
     border-radius: var(--ios-radius-xl);
-    border: 0.5px solid var(--ios-separator);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.3);
     max-width: 320px; max-height: 90%; overflow-y: auto; touch-action: pan-y;
-    backdrop-filter: var(--ios-blur-heavy);
-    -webkit-backdrop-filter: var(--ios-blur-heavy);
     letter-spacing: -0.01em;
+    line-height: 1.5;
   }
   #message button {
-    margin-top: 20px; padding: 14px 36px; font-size: 17px; cursor: pointer;
-    background: linear-gradient(135deg, var(--ios-blue), #5856D6);
-    border: none; border-radius: 100px;
+    margin-top: 20px; padding: 14px 32px; font-size: 16px; cursor: pointer;
+    background: var(--ios-blue);
+    border: none; border-radius: 12px;
     color: #fff; font-weight: 600; min-width: 200px; touch-action: manipulation;
-    transition: all 0.15s; font-family: var(--font);
-    box-shadow: 0 2px 8px rgba(0,122,255,0.2);
+    transition: background 0.15s, transform 0.1s; font-family: var(--font);
   }
-  #message button:active { transform: scale(0.95); }
+  #message button:hover { background: #0071e3; }
+  #message button:active { transform: scale(0.97); background: #0060c0; }
 
   #joystick {
     position: absolute; bottom: calc(24px + env(safe-area-inset-bottom)); left: 24px;
     width: 120px; height: 120px; border-radius: 50%;
-    background: rgba(120,120,128,0.16);
-    border: 1px solid rgba(120,120,128,0.24);
+    background: rgba(120,120,128,0.14);
+    border: 1px solid rgba(120,120,128,0.22);
     z-index: 35; display: none; touch-action: none;
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
   #stick {
     position: absolute; top: 50%; left: 50%; width: 52px; height: 52px;
     margin-left: -26px; margin-top: -26px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.22);
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.3);
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     pointer-events: none; will-change: transform;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
   #dashBtn {
     position: absolute; bottom: calc(32px + env(safe-area-inset-bottom)); right: 24px;
-    width: 80px; height: 80px; border-radius: 50%;
-    background: rgba(255,69,58,0.2);
+    width: 78px; height: 78px; border-radius: 50%;
+    background: rgba(255,69,58,0.16);
     border: 1px solid rgba(255,69,58,0.4);
     color: #fff; font-size: 12px; font-weight: 700;
     z-index: 35; display: none; align-items: center; justify-content: center;
     text-shadow: 0 1px 3px rgba(0,0,0,0.3); touch-action: none; cursor: pointer; user-select: none;
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    transition: all 0.15s;
+    transition: transform 0.1s, background 0.15s;
     font-family: var(--font);
     letter-spacing: -0.01em;
+    padding: 6px;
+    text-align: center;
+    line-height: 1.15;
   }
-  #dashBtn:active { transform: scale(0.9); background: rgba(255,69,58,0.4); }
+  #dashBtn:active { transform: scale(0.92); background: rgba(255,69,58,0.4); }
   #dashBtn.cooling { opacity: 0.25; border-color: rgba(120,120,128,0.3); background: rgba(120,120,128,0.1); }
-  
+
   body.touch #joystick { display: block; }
   body.touch #dashBtn { display: flex; }
+
+  /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
+  @media (max-width: 500px), (max-height: 700px) {
+    .menu-content { gap: 10px; padding-left: 12px; padding-right: 12px; }
+    #menu h1 { font-size: 24px; }
+    #menu .subtitle { font-size: 13px; margin-top: 4px; }
+    #menu .menu-header { padding: 2px 0 4px; }
+    .menu-tab { padding: 8px 10px; font-size: 12px; }
+    .menu-section { padding: 12px; gap: 10px; border-radius: 12px; }
+    .menu-section-title { font-size: 10px; }
+    #fanis-count-display, #ally-count-display { font-size: 17px; }
+    .skin-preview { width: 40px; height: 40px; }
+    .skin-name { font-size: 13px; min-width: 80px; }
+    .skin-btn { width: 32px; height: 32px; font-size: 14px; }
+    #sound-btn { padding: 13px; font-size: 14px; }
+    #start-btn { padding: 15px; font-size: 16px; }
+    #secret-code-input { padding: 11px 12px; font-size: 15px; }
+    #secret-code-btn { padding: 12px 20px; font-size: 14px; }
+  }
+
+  @media (max-width: 380px) {
+    .menu-content { padding-left: 10px; padding-right: 10px; }
+    #menu h1 { font-size: 21px; }
+    #menu .subtitle { font-size: 12px; }
+    .menu-tab { padding: 7px 8px; font-size: 11px; }
+    .menu-section { padding: 11px; gap: 9px; }
+    .skin-name { min-width: 70px; font-size: 12px; }
+    .skin-preview { width: 36px; height: 36px; }
+    .skin-btn { width: 30px; height: 30px; }
+    #start-btn { padding: 14px; font-size: 15px; }
+  }
 
   @media (max-width: 500px) {
     #joystick { width: 110px; height: 110px; }
     #stick { width: 48px; height: 48px; margin-left: -24px; margin-top: -24px; }
-    #dashBtn { width: 72px; height: 72px; font-size: 11px; bottom: calc(28px + env(safe-area-inset-bottom)); }
+    #dashBtn { width: 70px; height: 70px; font-size: 11px; bottom: calc(28px + env(safe-area-inset-bottom)); }
     #minimap { width: 120px; height: 90px; top: max(48px, calc(env(safe-area-inset-top) + 40px)); }
     #ui { font-size: 11px; gap: 4px; }
-    #score-big { font-size: 14px; }
-    #fps-counter { font-size: 10px; padding: 4px 8px; }
-    #message { font-size: 15px; padding: 24px; max-width: 290px; }
+    .ui-badge { padding: 5px 9px; }
+    #score-big { font-size: 13px; }
+    #fps-counter { font-size: 10px; padding: 4px 7px; }
+    #message { font-size: 15px; padding: 22px; max-width: 290px; }
     #message button { font-size: 15px; padding: 12px 28px; }
     #player { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
     .ally { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
     .fanis { width: 68px; height: 94px; }
-    #menu h1 { font-size: 26px; }
-    .skin-preview { width: 40px; height: 40px; }
-    .skin-name { font-size: 13px; min-width: 80px; }
-    .menu-section { padding: 14px; }
   }
 
   #hint {
-    position: absolute; bottom: max(10px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right));
-    font-size: 11px; opacity: 0.4; z-index: 30; pointer-events: none; text-align: right;
+    position: absolute; bottom: max(48px, calc(env(safe-area-inset-bottom) + 36px));
+    right: max(12px, env(safe-area-inset-right));
+    font-size: 11px; opacity: 0.55; z-index: 30; pointer-events: none; text-align: right;
     max-width: 220px;
     background: var(--ios-surface);
     padding: 8px 12px; border-radius: var(--ios-radius-sm);
-    backdrop-filter: var(--ios-blur); -webkit-backdrop-filter: var(--ios-blur);
-    border: 0.5px solid var(--ios-separator);
+    border: 1px solid rgba(255,255,255,0.06);
     font-weight: 500;
+    line-height: 1.5;
   }
   body.touch #hint { display: none; }
 </style>
@@ -582,7 +627,7 @@
   </div>
   <div id="minimap"><canvas id="mmcanvas" width="170" height="128"></canvas></div>
   <div id="fps-counter">-- FPS</div>
-  
+
   <div id="menu">
     <div class="menu-content">
       <div class="menu-header">
@@ -590,93 +635,95 @@
         <div class="subtitle">Собирай термометры и не фанис!</div>
       </div>
 
-      <!-- ТАБЫ -->
       <div class="menu-tabs">
         <button class="menu-tab active" data-tab="game">Игра</button>
         <button class="menu-tab" data-tab="skins">Скины</button>
       </div>
 
-      <!-- ВКЛАДКА: ИГРА -->
-      <div class="menu-tab-content active" data-tab-content="game">
-        <div class="menu-section">
-          <div class="menu-section-title">Количество Фанисов</div>
-          <div class="slider-container">
-            <input type="range" id="fanis-count-slider" min="1" max="10" value="4">
-            <span id="fanis-count-display">4 Фаниса</span>
+      <div class="menu-scroll">
+        <!-- ВКЛАДКА: ИГРА -->
+        <div class="menu-tab-content active" data-tab-content="game">
+          <div class="menu-section">
+            <div class="menu-section-title">Количество Фанисов</div>
+            <div class="slider-container">
+              <input type="range" id="fanis-count-slider" min="1" max="10" value="4">
+              <span id="fanis-count-display">4 Фаниса</span>
+            </div>
           </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">больше рабовайци</div>
+            <div class="slider-container">
+              <input type="range" id="ally-count-slider" min="0" max="10" value="0">
+              <span id="ally-count-display">0 работы</span>
+            </div>
+          </div>
+
+          <button id="sound-btn">🔊 Звук: ВКЛ</button>
         </div>
 
-        <div class="menu-section">
-          <div class="menu-section-title">больше рабовайци</div>
-          <div class="slider-container">
-            <input type="range" id="ally-count-slider" min="0" max="10" value="0">
-            <span id="ally-count-display">0 работы</span>
+        <!-- ВКЛАДКА: СКИНЫ -->
+        <div class="menu-tab-content" data-tab-content="skins">
+          <div class="menu-section">
+            <div class="menu-section-title">Скин увамина</div>
+            <div class="skin-selector">
+              <button class="skin-btn" data-type="player" data-dir="-1">◀</button>
+              <div class="skin-preview" id="player-skin-preview"></div>
+              <span id="player-skin-name" class="skin-name">Стандарт</span>
+              <button class="skin-btn" data-type="player" data-dir="1">▶</button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Скин Фаниса</div>
+            <div class="skin-selector">
+              <button class="skin-btn" data-type="fanis" data-dir="-1">◀</button>
+              <div class="skin-preview" id="fanis-skin-preview"></div>
+              <span id="fanis-skin-name" class="skin-name">Стандарт</span>
+              <button class="skin-btn" data-type="fanis" data-dir="1">▶</button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Скин термометра</div>
+            <div class="skin-selector">
+              <button class="skin-btn" data-type="thermo" data-dir="-1">◀</button>
+              <div class="skin-preview" id="thermo-skin-preview"></div>
+              <span id="thermo-skin-name" class="skin-name">Стандарт</span>
+              <button class="skin-btn" data-type="thermo" data-dir="1">▶</button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Скин пули</div>
+            <div class="skin-selector">
+              <button class="skin-btn" data-type="bullet" data-dir="-1">◀</button>
+              <div class="skin-preview" id="bullet-skin-preview"></div>
+              <span id="bullet-skin-name" class="skin-name">Стандарт</span>
+              <button class="skin-btn" data-type="bullet" data-dir="1">▶</button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Скин пола</div>
+            <div class="skin-selector">
+              <button class="skin-btn" data-type="floor" data-dir="-1">◀</button>
+              <div class="skin-preview" id="floor-skin-preview"></div>
+              <span id="floor-skin-name" class="skin-name">Стандарт</span>
+              <button class="skin-btn" data-type="floor" data-dir="1">▶</button>
+            </div>
+          </div>
+
+          <div class="menu-section" style="border-color: rgba(255,214,10,0.15);">
+            <div class="menu-section-title" style="color: var(--ios-yellow);">коды вод</div>
+            <input type="text" id="secret-code-input" placeholder="Введи код..." autocomplete="off">
+            <button id="secret-code-btn">Актиделай</button>
+            <div id="secret-code-message"></div>
           </div>
         </div>
-
-        <button id="sound-btn">🔊 Звук: ВКЛ</button>
-        <button id="start-btn">НАЧАТЬ Фаниса</button>
       </div>
 
-      <!-- ВКЛАДКА: СКИНЫ -->
-      <div class="menu-tab-content" data-tab-content="skins">
-        <div class="menu-section">
-          <div class="menu-section-title">Скин увамина</div>
-          <div class="skin-selector">
-            <button class="skin-btn" data-type="player" data-dir="-1">◀</button>
-            <div class="skin-preview" id="player-skin-preview"></div>
-            <span id="player-skin-name" class="skin-name">Стандарт</span>
-            <button class="skin-btn" data-type="player" data-dir="1">▶</button>
-          </div>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Скин Фаниса</div>
-          <div class="skin-selector">
-            <button class="skin-btn" data-type="fanis" data-dir="-1">◀</button>
-            <div class="skin-preview" id="fanis-skin-preview"></div>
-            <span id="fanis-skin-name" class="skin-name">Стандарт</span>
-            <button class="skin-btn" data-type="fanis" data-dir="1">▶</button>
-          </div>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Скин термометра</div>
-          <div class="skin-selector">
-            <button class="skin-btn" data-type="thermo" data-dir="-1">◀</button>
-            <div class="skin-preview" id="thermo-skin-preview"></div>
-            <span id="thermo-skin-name" class="skin-name">Стандарт</span>
-            <button class="skin-btn" data-type="thermo" data-dir="1">▶</button>
-          </div>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Скин пули</div>
-          <div class="skin-selector">
-            <button class="skin-btn" data-type="bullet" data-dir="-1">◀</button>
-            <div class="skin-preview" id="bullet-skin-preview"></div>
-            <span id="bullet-skin-name" class="skin-name">Стандарт</span>
-            <button class="skin-btn" data-type="bullet" data-dir="1">▶</button>
-          </div>
-        </div>
-
-        <div class="menu-section">
-          <div class="menu-section-title">Скин пола</div>
-          <div class="skin-selector">
-            <button class="skin-btn" data-type="floor" data-dir="-1">◀</button>
-            <div class="skin-preview" id="floor-skin-preview"></div>
-            <span id="floor-skin-name" class="skin-name">Стандарт</span>
-            <button class="skin-btn" data-type="floor" data-dir="1">▶</button>
-          </div>
-        </div>
-
-        <div class="menu-section" style="border-color: rgba(255,214,10,0.2);">
-          <div class="menu-section-title" style="color: var(--ios-yellow);">коды вод</div>
-          <input type="text" id="secret-code-input" placeholder="Введи код..." autocomplete="off">
-          <button id="secret-code-btn">Актиделай</button>
-          <div id="secret-code-message"></div>
-        </div>
-      </div>
+      <button id="start-btn">НАЧАТЬ Фаниса</button>
     </div>
   </div>
 
@@ -695,9 +742,9 @@
    { name: "двойной привет", url: "https://i.ibb.co/WvPt91RG/102-20261123005231.png" },
    { name: "Даня в здании хз", url: "https://i.ibb.co/HDYc30hG/104-20261123005823.png" },
    { name: "некий чемпион", url: "https://i.ibb.co/ksXbvsKN/107-20261123010627.png" },
-    { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" } 
+    { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" }
   ];
-  
+
   const FANIS_SKINS = [
     { name: "Фанисный", url: "https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png" },
     { name: "Фанисла", url: "https://thumbs4.imgbox.com/b9/06/0jWeRdBn_t.jpg" },
@@ -875,7 +922,7 @@
   }
 
   function stopBgMusic() {
-    if (bgOsc) { bgOsc.stop(); bgOsc.disconnect(); bgOsc = null; }
+    if (bgOsc) { try { bgOsc.stop(); } catch(e){} bgOsc.disconnect(); bgOsc = null; }
     if (bgMusicNode) { bgMusicNode.disconnect(); bgMusicNode = null; }
     if (bgFilter) { bgFilter.disconnect(); bgFilter = null; }
   }
@@ -886,7 +933,7 @@
     initAudio();
     soundEnabled = !soundEnabled;
     soundBtn.textContent = soundEnabled ? '🔊 Звук: ВКЛ' : '🔇 Звук: ВЫКЛ';
-    if (soundEnabled) { startBgMusic(); playTone(440, 'sine', 0.2, 0.05, 880, 1000); } 
+    if (soundEnabled) { startBgMusic(); playTone(440, 'sine', 0.2, 0.05, 880, 1000); }
     else { stopBgMusic(); }
   });
 
@@ -940,22 +987,21 @@
   let joyActive = false, joyVX = 0, joyVY = 0;
   let minimapFrame = 0, viewZoom = 1;
 
-  // ===== FPS СЧЁТЧИК =====
   let fpsFrames = 0;
   let fpsLastTime = performance.now();
   let currentFps = 60;
-  
+
   function updateFps(now) {
     fpsFrames++;
     const elapsed = now - fpsLastTime;
     if (elapsed >= 500) {
       currentFps = Math.round(fpsFrames * 1000 / elapsed);
-      fpsEl.textContent = `${currentFps} FPS`;
+      fpsEl.textContent = currentFps + ' FPS';
       fpsFrames = 0;
       fpsLastTime = now;
     }
   }
-  
+
   function updateViewZoom() {
     const vw = viewport.clientWidth, vh = viewport.clientHeight;
     const minDim = Math.min(vw, vh);
@@ -965,10 +1011,10 @@
     else viewZoom = 1;
   }
 
-  // ===== OBJECT POOL ДЛЯ ПУЛЬ =====
   const BULLET_POOL_SIZE = 200;
   const bulletPool = [];
-  
+  const bulletFree = [];
+
   function initBulletPool() {
     const frag = document.createDocumentFragment();
     for (let i = 0; i < BULLET_POOL_SIZE; i++) {
@@ -976,38 +1022,41 @@
       el.className = 'bullet';
       el.style.display = 'none';
       frag.appendChild(el);
-      bulletPool.push({ el, active: false, x: 0, y: 0, vx: 0, vy: 0, piercesWalls: false });
+      const b = { el, active: false, x: 0, y: 0, vx: 0, vy: 0, piercesWalls: false };
+      bulletPool.push(b);
+      bulletFree.push(b);
     }
     world.appendChild(frag);
   }
-  
+
   function getBullet() {
-    for (let i = 0; i < bulletPool.length; i++) {
-      if (!bulletPool[i].active) {
-        const b = bulletPool[i];
-        b.active = true;
-        b.el.style.display = '';
-        return b;
-      }
+    let b;
+    if (bulletFree.length > 0) {
+      b = bulletFree.pop();
+    } else {
+      const el = document.createElement('div');
+      el.className = 'bullet';
+      world.appendChild(el);
+      b = { el, active: false, x: 0, y: 0, vx: 0, vy: 0, piercesWalls: false };
+      bulletPool.push(b);
     }
-    // Расширяем пул если нужно
-    const el = document.createElement('div');
-    el.className = 'bullet';
-    world.appendChild(el);
-    const b = { el, active: true, x: 0, y: 0, vx: 0, vy: 0, piercesWalls: false };
-    bulletPool.push(b);
+    b.active = true;
+    b.el.style.display = '';
     return b;
   }
-  
+
   function releaseBullet(b) {
+    if (!b.active) return;
     b.active = false;
     b.el.style.display = 'none';
+    bulletFree.push(b);
   }
 
   function circleRect(cx, cy, r, rect) {
     const nx = Math.max(rect.x, Math.min(cx, rect.x + rect.w));
     const ny = Math.max(rect.y, Math.min(cy, rect.y + rect.h));
-    return (cx - nx) ** 2 + (cy - ny) ** 2 < r * r;
+    const dx = cx - nx, dy = cy - ny;
+    return dx * dx + dy * dy < r * r;
   }
   function hitsWall(cx, cy, r) {
     for (let i = 0; i < WALLS.length; i++) {
@@ -1021,6 +1070,10 @@
     obj.x = Math.max(r, Math.min(W - r, obj.x));
     obj.y = Math.max(r, Math.min(H - r, obj.y));
   }
+
+  const _scratchFanis = { x: 0, y: 0 };
+  const _scratchAlly = { x: 0, y: 0 };
+  const _scratchPlayer = { x: 0, y: 0 };
 
   function segIntersectsRect(ax, ay, bx, by, rect) {
     const minX = Math.min(ax, bx), maxX = Math.max(ax, bx);
@@ -1248,12 +1301,12 @@
         sy = 100 + Math.random() * (H - 200);
         attempts++;
       } while ((hitsWall(sx, sy, F_SIZE / 2) || Math.hypot(sx - px, sy - py) < 400) && attempts < 200);
-      
+
       const el = document.createElement('div');
       el.className = 'fanis fanis-type-' + type;
-      el.style.left = sx + 'px'; 
+      el.style.left = sx + 'px';
       el.style.top = sy + 'px';
-      
+
       if (type === FANIS_TYPE.THERMO) {
         el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
       } else {
@@ -1266,9 +1319,9 @@
         }
         el.style.backgroundImage = `url('${skinUrl}')`;
       }
-      
+
       world.appendChild(el);
-      
+
       let speed, shootRange, cooldownMult, bulletSpeedMult, bulletSize, piercesWalls;
       switch (type) {
         case FANIS_TYPE.CLASSIC:
@@ -1292,7 +1345,7 @@
           bulletSize = 24; piercesWalls = false;
           break;
       }
-      
+
       fanises.push({
         x: sx, y: sy, el, type,
         path: [], pathIndex: 0, pathTimer: 0,
@@ -1320,7 +1373,7 @@
         attempts++;
       }
       if (hitsWall(sx, sy, ALLY_SIZE / 2)) { sx = px; sy = py; }
-      
+
       const skinIdx = Math.floor(Math.random() * PLAYER_SKINS.length);
       const el = document.createElement('div');
       el.className = 'ally';
@@ -1334,6 +1387,7 @@
 
   function updateAllies(dt) {
     const speed = 3.0 * dt;
+    const dodgeR2 = 130 * 130;
     for (let i = 0; i < allies.length; i++) {
       const ally = allies[i];
       if (!ally.alive) continue;
@@ -1343,20 +1397,21 @@
       my = Math.sin(ally.wanderAngle);
       for (let j = 0; j < bullets.length; j++) {
         const b = bullets[j];
-        const dist = Math.hypot(b.x - ally.x, b.y - ally.y);
-        if (dist < 130) {
-          const angle = Math.atan2(ally.y - b.y, ally.x - b.x);
+        const bdx = b.x - ally.x, bdy = b.y - ally.y;
+        if (bdx * bdx + bdy * bdy < dodgeR2) {
+          const angle = Math.atan2(-bdy, -bdx);
           mx += Math.cos(angle) * 1.5;
           my += Math.sin(angle) * 1.5;
         }
       }
-      const len = Math.hypot(mx, my);
+      const len = Math.sqrt(mx * mx + my * my);
       if (len > 1) { mx /= len; my /= len; }
-      const obj = { x: ally.x, y: ally.y };
-      tryMove(obj, mx * speed, my * speed, ALLY_SIZE / 2);
-      ally.x = obj.x; ally.y = obj.y;
-      ally.el.style.left = (ally.x + ALLY_SIZE/2) + 'px';
-      ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
+      _scratchAlly.x = ally.x;
+      _scratchAlly.y = ally.y;
+      tryMove(_scratchAlly, mx * speed, my * speed, ALLY_SIZE / 2);
+      ally.x = _scratchAlly.x; ally.y = _scratchAlly.y;
+      ally.el.style.left = (ally.x + ALLY_SIZE / 2) + 'px';
+      ally.el.style.top = (ally.y + ALLY_SIZE / 2) + 'px';
     }
   }
 
@@ -1364,7 +1419,7 @@
     const skin = FLOOR_SKINS[currentFloorSkinIdx];
     if (skin.useGradient) {
       world.style.backgroundImage = '';
-      world.style.background = 
+      world.style.background =
         'repeating-linear-gradient(0deg, rgba(28,28,30,0.3) 0px, rgba(28,28,30,0.3) 60px, rgba(20,20,22,0.3) 60px, rgba(20,20,22,0.3) 61px),' +
         'repeating-linear-gradient(90deg, rgba(28,28,30,0.3) 0px, rgba(28,28,30,0.3) 60px, rgba(20,20,22,0.3) 60px, rgba(20,20,22,0.3) 61px)';
     } else {
@@ -1377,7 +1432,7 @@
     if (preview) {
       if (skin.useGradient) {
         preview.style.backgroundImage = '';
-        preview.style.background = 
+        preview.style.background =
           'repeating-linear-gradient(0deg, rgba(28,28,30,0.5) 0px, rgba(28,28,30,0.5) 15px, rgba(20,20,22,0.5) 15px, rgba(20,20,22,0.5) 16px),' +
           'repeating-linear-gradient(90deg, rgba(28,28,30,0.5) 0px, rgba(28,28,30,0.5) 15px, rgba(20,20,22,0.5) 15px, rgba(20,20,22,0.5) 16px)';
       } else {
@@ -1427,14 +1482,14 @@
 
   function getFanisText(count) {
     if (count === 1) return "1 Фанис";
-    if (count >= 2 && count <= 4) return `${count} Фаниса`;
-    return `${count} Фанисов`;
+    if (count >= 2 && count <= 4) return count + " Фаниса";
+    return count + " Фанисов";
   }
   function getAllyText(count) {
     if (count === 0) return "0 работы";
     if (count === 1) return "1 работа";
-    if (count >= 2 && count <= 4) return `${count} работы`;
-    return `${count} работ`;
+    if (count >= 2 && count <= 4) return count + " работы";
+    return count + " работ";
   }
 
   fanisSlider.addEventListener('input', () => {
@@ -1487,19 +1542,18 @@
     score = 0; scoreEl.textContent = '0';
     startTime = null; running = true;
     dashCooldown = 0; dashActive = 0;
-    // Освобождаем все пули в пуле
-    for (let i = 0; i < bulletPool.length; i++) {
-      if (bulletPool[i].active) releaseBullet(bulletPool[i]);
-    }
-    bullets = [];
+
+    for (let i = 0; i < bullets.length; i++) releaseBullet(bullets[i]);
+    bullets.length = 0;
+
     clearThermos();
     messageEl.style.display = 'none';
     buildWalls();
     walkCache.clear();
     spawnFanises(fanisCount);
     spawnAllies(allyCount);
-    player.style.left = (px + P_SIZE/2) + 'px';
-    player.style.top = (py + P_SIZE/2) + 'px';
+    player.style.left = (px + P_SIZE / 2) + 'px';
+    player.style.top = (py + P_SIZE / 2) + 'px';
     player.style.opacity = '1';
     fillThermos();
     updateViewZoom();
@@ -1532,12 +1586,13 @@
   function moveFanis(f, dt) {
     const fcx = f.x, fcy = f.y;
     const targetX = px, targetY = py;
-    const dist = Math.hypot(targetX - fcx, targetY - fcy);
+    const tdx = targetX - fcx, tdy = targetY - fcy;
+    const dist = Math.sqrt(tdx * tdx + tdy * tdy);
     f.targetX = targetX; f.targetY = targetY;
-    
+
     f.pathTimer -= dt;
     const recalcThreshold = dashActive > 0 ? 5 : (dist < 300 ? 10 : 18);
-    
+
     if (f.pathTimer <= 0 || f.path.length === 0 || f.pathIndex >= f.path.length) {
       let tx = targetX, ty = targetY;
       if (f.type === FANIS_TYPE.CLASSIC && dist > 200) {
@@ -1559,29 +1614,36 @@
     while (remaining > 0 && f.pathIndex < f.path.length) {
       const target = f.path[f.pathIndex];
       const dx = target.x - fcx, dy = target.y - fcy;
-      const d = Math.hypot(dx, dy);
+      const d = Math.sqrt(dx * dx + dy * dy);
       if (d < 3) { f.pathIndex++; continue; }
       const step = Math.min(remaining, d);
-      const obj = { x: f.x, y: f.y };
+      _scratchFanis.x = f.x;
+      _scratchFanis.y = f.y;
+      tryMove(_scratchFanis, (dx / d) * step, (dy / d) * step, F_SIZE / 2);
       const bx = f.x, by = f.y;
-      tryMove(obj, (dx / d) * step, (dy / d) * step, F_SIZE / 2);
-      f.x = obj.x; f.y = obj.y;
-      const moved = Math.hypot(f.x - bx, f.y - by);
+      f.x = _scratchFanis.x; f.y = _scratchFanis.y;
+      const moved = Math.sqrt((f.x - bx) * (f.x - bx) + (f.y - by) * (f.y - by));
       remaining -= moved;
       if (moved < step * 0.3) f.pathIndex++;
       if (moved < 0.1) break;
     }
-    
+
     f.el.style.left = f.x + 'px';
     f.el.style.top = f.y + 'px';
 
-    if (Math.hypot(px - fcx, py - fcy) < (P_SIZE + F_SIZE) / 2 - 8) {
+    const pdx = px - f.x, pdy = py - f.y;
+    const touchR = (P_SIZE + F_SIZE) / 2 - 8;
+    if (pdx * pdx + pdy * pdy < touchR * touchR) {
       gameOver('КАСАНИЕ');
     }
+
+    const allyR = (ALLY_SIZE + F_SIZE) / 2 - 8;
+    const allyR2 = allyR * allyR;
     for (let i = 0; i < allies.length; i++) {
       const ally = allies[i];
       if (!ally.alive) continue;
-      if (Math.hypot(ally.x - fcx, ally.y - fcy) < (ALLY_SIZE + F_SIZE) / 2 - 8) {
+      const adx = ally.x - f.x, ady = ally.y - f.y;
+      if (adx * adx + ady * ady < allyR2) {
         ally.alive = false;
         ally.el.classList.add('dead');
         playTone(300, 'sawtooth', 0.3, 0.1, 100, 500);
@@ -1591,7 +1653,8 @@
 
   function fanisShoot(f) {
     const fcx = f.x, fcy = f.y;
-    const dist = Math.hypot(f.targetX - fcx, f.targetY - fcy);
+    const ttdx = f.targetX - fcx, ttdy = f.targetY - fcy;
+    const dist = Math.sqrt(ttdx * ttdx + ttdy * ttdy);
     if (dist < 1) return false;
     const bulletSpeed = 6.5 * f.bulletSpeedMult;
 
@@ -1613,9 +1676,8 @@
 
     const travelTime = dist / bulletSpeed;
     const leadFactor = dashActive > 0 ? 1.5 : 1.2;
-    let leadX = f.targetX + pvx * travelTime * leadFactor;
-    let leadY = f.targetY + pvy * travelTime * leadFactor;
-    let tx = leadX, ty = leadY;
+    let tx = f.targetX + pvx * travelTime * leadFactor;
+    let ty = f.targetY + pvy * travelTime * leadFactor;
 
     if (!f.piercesWalls) {
       if (!hasLineOfSight(fcx, fcy, tx, ty)) {
@@ -1625,7 +1687,7 @@
     }
 
     const dx = tx - fcx, dy = ty - fcy;
-    const d = Math.hypot(dx, dy) || 1;
+    const d = Math.sqrt(dx * dx + dy * dy) || 1;
     const nx = dx / d, ny = dy / d;
 
     let count = 1, spread = 0;
@@ -1655,19 +1717,25 @@
       b.x = fcx; b.y = fcy; b.vx = vx; b.vy = vy; b.piercesWalls = f.piercesWalls;
       bullets.push(b);
     }
-    playSound('shoot', 0.6); 
+    playSound('shoot', 0.6);
     return true;
   }
 
   function updateBullets(dt) {
+    const playerHitR = P_SIZE / 2 + 12;
+    const playerHitR2 = playerHitR * playerHitR;
+    const allyHitR = ALLY_SIZE / 2 + 12;
+    const allyHitR2 = allyHitR * allyHitR;
+
     for (let i = bullets.length - 1; i >= 0; i--) {
       const b = bullets[i];
       const dx = b.vx * dt, dy = b.vy * dt;
-      const totalLen = Math.hypot(dx, dy);
+      const totalLen = Math.sqrt(dx * dx + dy * dy);
       const substeps = Math.max(1, Math.ceil(totalLen / 6));
+      const sdx = dx / substeps, sdy = dy / substeps;
       let removed = false;
       for (let s = 0; s < substeps && !removed; s++) {
-        const nx = b.x + dx / substeps, ny = b.y + dy / substeps;
+        const nx = b.x + sdx, ny = b.y + sdy;
         let hit = false;
         if (!b.piercesWalls) {
           for (let w = 0; w < WALLS.length; w++) {
@@ -1676,25 +1744,32 @@
         }
         if (hit || nx < -20 || nx > W + 20 || ny < -20 || ny > H + 20) {
           releaseBullet(b);
-          bullets.splice(i, 1); removed = true; 
-          if (hit) playTone(80, 'triangle', 0.1, 0.05, null, 200); 
+          bullets[i] = bullets[bullets.length - 1];
+          bullets.pop();
+          removed = true;
+          if (hit) playTone(80, 'triangle', 0.1, 0.05, null, 200);
           break;
         }
         b.x = nx; b.y = ny;
-        if (Math.hypot(px - b.x, py - b.y) < P_SIZE/2 + 12) {
+        const pdx = px - b.x, pdy = py - b.y;
+        if (pdx * pdx + pdy * pdy < playerHitR2) {
           releaseBullet(b);
-          bullets.splice(i, 1); removed = true;
+          bullets[i] = bullets[bullets.length - 1];
+          bullets.pop();
           gameOver('ПУЛЯ');
           return;
         }
         for (let a = 0; a < allies.length; a++) {
           const ally = allies[a];
           if (!ally.alive) continue;
-          if (Math.hypot(ally.x - b.x, ally.y - b.y) < ALLY_SIZE/2 + 12) {
+          const adx = ally.x - b.x, ady = ally.y - b.y;
+          if (adx * adx + ady * ady < allyHitR2) {
             ally.alive = false;
             ally.el.classList.add('dead');
             releaseBullet(b);
-            bullets.splice(i, 1); removed = true;
+            bullets[i] = bullets[bullets.length - 1];
+            bullets.pop();
+            removed = true;
             playTone(300, 'sawtooth', 0.3, 0.1, 100, 500);
             break;
           }
@@ -1729,14 +1804,15 @@
 
     let speed = PLAYER_SPEED * dt;
     if (dashActive > 0) { speed *= 2.8; mx = dashDir.x; my = dashDir.y; }
-    else { const len = Math.hypot(mx, my); if (len > 1) { mx /= len; my /= len; } }
+    else { const len = Math.sqrt(mx * mx + my * my); if (len > 1) { mx /= len; my /= len; } }
 
     const oldPx = px, oldPy = py;
-    const obj = { x: px, y: py };
-    tryMove(obj, mx * speed, my * speed, P_SIZE / 2);
-    px = obj.x; py = obj.y;
+    _scratchPlayer.x = px; _scratchPlayer.y = py;
+    tryMove(_scratchPlayer, mx * speed, my * speed, P_SIZE / 2);
+    px = _scratchPlayer.x; py = _scratchPlayer.y;
 
-    if (Math.hypot(px - oldPx, py - oldPy) > 1 && Math.random() < 0.08) {
+    const movedDist2 = (px - oldPx) * (px - oldPx) + (py - oldPy) * (py - oldPy);
+    if (movedDist2 > 1 && Math.random() < 0.08) {
       playTone(80, 'triangle', 0.08, 0.02, null, 150);
     }
     if (dt > 0.01) {
@@ -1744,8 +1820,8 @@
       pvy = pvy * 0.6 + ((py - oldPy) / dt) * 0.4;
     }
 
-    player.style.left = (px + P_SIZE/2) + 'px';
-    player.style.top = (py + P_SIZE/2) + 'px';
+    player.style.left = (px + P_SIZE / 2) + 'px';
+    player.style.top = (py + P_SIZE / 2) + 'px';
     player.style.opacity = dashActive > 0 ? '0.55' : '1';
 
     updateAllies(dt);
@@ -1760,7 +1836,8 @@
       }
       if (f.shootCooldown <= 0) {
         const fcx = f.x, fcy = f.y;
-        const dist = Math.hypot(f.targetX - fcx, f.targetY - fcy);
+        const ddx = f.targetX - fcx, ddy = f.targetY - fcy;
+        const dist = Math.sqrt(ddx * ddx + ddy * ddy);
         if (f.type === FANIS_TYPE.THERMO) {
           if (dist < f.shootRange) {
             fanisShoot(f);
@@ -1790,9 +1867,12 @@
       const t = thermos[i];
       const tcx = t.x + t.style.w / 2, tcy = t.y + t.style.h / 2;
       const r = Math.max(t.style.w, t.style.h) / 2 + P_SIZE / 2 - 4;
-      if (Math.hypot(px - tcx, py - tcy) < r) {
+      const r2 = r * r;
+      const pdx = px - tcx, pdy = py - tcy;
+      if (pdx * pdx + pdy * pdy < r2) {
         t.el.remove();
-        thermos.splice(i, 1);
+        thermos[i] = thermos[thermos.length - 1];
+        thermos.pop();
         score += Math.round(t.style.value * scoreMultiplier);
         scoreEl.textContent = score;
         playTone(1200, 'sine', 0.2, 0.08, 1800, 3000);
@@ -1802,7 +1882,6 @@
     }
 
     updateCamera();
-    // FPS-адаптивная миникарта
     const minimapInterval = currentFps < 30 ? 6 : currentFps < 50 ? 4 : 3;
     if (++minimapFrame >= minimapInterval) {
       minimapFrame = 0;
@@ -1821,11 +1900,11 @@
       const w = WALLS[i];
       mmCtx.fillRect(w.x * s, w.y * s, Math.max(1, w.w * s), Math.max(1, w.h * s));
     }
-    mmCtx.fillStyle = '#FFD60A'; 
+    mmCtx.fillStyle = '#FFD60A';
     for (let i = 0; i < thermos.length; i++) {
       const t = thermos[i];
       mmCtx.beginPath();
-      mmCtx.arc((t.x + t.style.w/2) * s, (t.y + t.style.h/2) * s, 2.5, 0, 7);
+      mmCtx.arc((t.x + t.style.w / 2) * s, (t.y + t.style.h / 2) * s, 2.5, 0, 7);
       mmCtx.fill();
     }
     mmCtx.fillStyle = '#64D2FF';
@@ -1864,8 +1943,8 @@
       px = aliveAlly.x; py = aliveAlly.y;
       pvx = 0; pvy = 0;
       player.style.backgroundImage = `url('${PLAYER_SKINS[aliveAlly.skinIdx].url}')`;
-      player.style.left = (px + P_SIZE/2) + 'px';
-      player.style.top = (py + P_SIZE/2) + 'px';
+      player.style.left = (px + P_SIZE / 2) + 'px';
+      player.style.top = (py + P_SIZE / 2) + 'px';
       playTone(600, 'sine', 0.3, 0.1, 900, 2000);
       return;
     }
@@ -1898,7 +1977,7 @@
       if (running && dashCooldown <= 0) { doDash(); playTone(200, 'triangle', 0.2, 0.06, 500, 800); }
       e.preventDefault(); return;
     }
-    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') e.preventDefault();
   }, { passive: false });
   window.addEventListener('keyup', e => { delete keys[e.code || e.key]; });
   window.addEventListener('blur', () => { for (const k in keys) delete keys[k]; });
@@ -1915,7 +1994,7 @@
   function doDash() {
     let { mx, my } = readDir();
     if (joyActive) { mx = joyVX; my = joyVY; }
-    const len = Math.hypot(mx, my);
+    const len = Math.sqrt(mx * mx + my * my);
     if (len > 0) {
       dashDir = { x: mx / len, y: my / len };
       dashActive = 12; dashCooldown = 90;
@@ -1930,6 +2009,15 @@
   detectTouch();
 
   let joyId = null;
+  let joystickRectCache = null;
+  function getJoystickRect() {
+    if (!joystickRectCache) {
+      const r = joystick.getBoundingClientRect();
+      joystickRectCache = { left: r.left, top: r.top, width: r.width, height: r.height };
+    }
+    return joystickRectCache;
+  }
+
   joystick.addEventListener('touchstart', e => {
     e.preventDefault();
     if (joyId !== null) return;
@@ -1961,32 +2049,36 @@
     window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
   });
   function updateJoy(t) {
-    const rect = joystick.getBoundingClientRect();
+    const rect = getJoystickRect();
     const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
     let dx = t.clientX - cx, dy = t.clientY - cy;
     const max = rect.width / 2 - 10;
-    const d = Math.hypot(dx, dy);
+    const d = Math.sqrt(dx * dx + dy * dy);
     if (d > max) { dx = dx / d * max; dy = dy / d * max; }
     stick.style.transform = `translate(${dx}px, ${dy}px)`;
     joyVX = dx / max; joyVY = dy / max;
   }
-  function onDash(e) { 
-    e.preventDefault(); 
+  function onDash(e) {
+    e.preventDefault();
     if (running && dashCooldown <= 0) { doDash(); playTone(200, 'triangle', 0.2, 0.06, 500, 800); }
   }
   dashBtn.addEventListener('touchstart', onDash, { passive: false });
   dashBtn.addEventListener('click', onDash);
 
-  // Debounced resize
   let resizeTimeout = null;
   window.addEventListener('resize', () => {
     if (resizeTimeout) clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
+      joystickRectCache = null;
       updateViewZoom();
       applyCamera();
     }, 150);
   });
-  window.addEventListener('orientationchange', () => setTimeout(() => { updateViewZoom(); applyCamera(); }, 100));
+  window.addEventListener('orientationchange', () => setTimeout(() => {
+    joystickRectCache = null;
+    updateViewZoom();
+    applyCamera();
+  }, 100));
   document.addEventListener('gesturestart', e => e.preventDefault());
   document.addEventListener('dblclick', e => e.preventDefault());
 

@@ -5,34 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Собери термометры и побегу от Фаниса</title>
 <style>
+  :root {
+    --ios-bg: #000000;
+    --ios-surface: rgba(28, 28, 30, 0.72);
+    --ios-surface-secondary: rgba(44, 44, 46, 0.6);
+    --ios-surface-tertiary: rgba(58, 58, 60, 0.4);
+    --ios-separator: rgba(84, 84, 88, 0.35);
+    --ios-label: #ffffff;
+    --ios-label-secondary: rgba(235, 235, 245, 0.6);
+    --ios-label-tertiary: rgba(235, 235, 245, 0.3);
+    --ios-blue: #007AFF;
+    --ios-green: #30D158;
+    --ios-red: #FF453A;
+    --ios-orange: #FF9F0A;
+    --ios-yellow: #FFD60A;
+    --ios-purple: #BF5AF2;
+    --ios-pink: #FF375F;
+    --ios-teal: #64D2FF;
+    --ios-radius-sm: 10px;
+    --ios-radius-md: 14px;
+    --ios-radius-lg: 20px;
+    --ios-radius-xl: 28px;
+    --ios-blur: saturate(180%) blur(40px);
+    --ios-blur-heavy: saturate(200%) blur(60px);
+    --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     width: 100%; height: 100%;
-    background: #0a0a0f; overflow: hidden;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    color: #fff; user-select: none; -webkit-user-select: none;
+    background: var(--ios-bg); overflow: hidden;
+    font-family: var(--font);
+    color: var(--ios-label); user-select: none; -webkit-user-select: none;
     touch-action: none;
+    -webkit-font-smoothing: antialiased;
   }
   #viewport {
     position: absolute; inset: 0; overflow: hidden;
-    background: radial-gradient(circle at 50% 40%, #1e1e2a, #0a0a12);
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(88, 86, 214, 0.15), transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255, 55, 95, 0.1), transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(10, 10, 15, 1), rgba(0, 0, 0, 1));
     touch-action: none;
   }
   #world {
     position: absolute; top: 0; left: 0;
     width: 2400px; height: 1800px;
     background:
-      repeating-linear-gradient(0deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px),
-      repeating-linear-gradient(90deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px);
+      repeating-linear-gradient(0deg, rgba(28,28,30,0.3) 0px, rgba(28,28,30,0.3) 60px, rgba(20,20,22,0.3) 60px, rgba(20,20,22,0.3) 61px),
+      repeating-linear-gradient(90deg, rgba(28,28,30,0.3) 0px, rgba(28,28,30,0.3) 60px, rgba(20,20,22,0.3) 60px, rgba(20,20,22,0.3) 61px);
     transform-origin: 0 0; will-change: transform;
   }
   .wall {
     position: absolute;
-    background: linear-gradient(135deg, #45455a, #2a2a3a);
-    border: 2px solid #5a5a70;
-    box-shadow: inset 0 0 12px #000, 0 2px 6px rgba(0,0,0,0.7);
+    background: linear-gradient(145deg, rgba(84,84,88,0.6), rgba(44,44,46,0.8));
+    border: 1px solid rgba(142,142,147,0.15);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
     z-index: 2;
-    box-sizing: border-box; 
     contain: strict;
   }
 
@@ -48,6 +78,7 @@
     margin-top: 28px;
     contain: style paint;
     will-change: transform;
+    filter: drop-shadow(0 2px 8px rgba(0,122,255,0.3));
   }
 
   .ally {
@@ -62,11 +93,10 @@
     margin-top: 28px;
     contain: style paint;
     will-change: transform;
-    transition: opacity 0.3s;
+    filter: drop-shadow(0 2px 6px rgba(100,210,255,0.3));
   }
-  .ally.dead { opacity: 0.2; filter: grayscale(1); }
+  .ally.dead { opacity: 0.15; filter: grayscale(1) brightness(0.5); }
 
-  /* ===== ФАНИСЫ: ИСПРАВЛЕННЫЙ ХИТБОКС ===== */
   .fanis {
     position: absolute;
     width: 80px; height: 110px;
@@ -74,40 +104,30 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center top;
-    border-radius: 10px;
-    border: 2px solid #ff1744;
-    box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
-    transition: box-shadow 0.15s, transform 0.1s;
+    border-radius: var(--ios-radius-md);
+    border: 2px solid rgba(255,69,58,0.6);
+    box-shadow: 0 0 20px rgba(255,69,58,0.25), 0 4px 12px rgba(0,0,0,0.3);
     transform: translate(-50%, -50%);
     contain: style paint;
     will-change: transform;
   }
-  .fanis-type-1 {
-    border-color: #ff1744;
-    box-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
-  }
-  .fanis-type-2 {
-    border-color: #b388ff;
-    box-shadow: 0 0 22px rgba(156, 39, 176, 0.6);
-  }
-  .fanis-type-3 {
-    border-color: #69f0ae;
-    box-shadow: 0 0 22px rgba(76, 175, 80, 0.6);
-  }
-  /* Термофанис: форма фаниса, текстура термометра, красная обводка */
+  .fanis-type-1 { border-color: rgba(255,69,58,0.7); box-shadow: 0 0 22px rgba(255,69,58,0.3), 0 4px 12px rgba(0,0,0,0.3); }
+  .fanis-type-2 { border-color: rgba(191,90,242,0.7); box-shadow: 0 0 22px rgba(191,90,242,0.35), 0 4px 12px rgba(0,0,0,0.3); }
+  .fanis-type-3 { border-color: rgba(48,209,88,0.7); box-shadow: 0 0 22px rgba(48,209,88,0.35), 0 4px 12px rgba(0,0,0,0.3); }
   .fanis-type-4 {
-    border: 3px solid #ff1744 !important;
-    box-shadow: 0 0 25px rgba(255, 23, 68, 0.7) !important;
+    border: 2px solid rgba(255,69,58,0.8) !important;
+    box-shadow: 0 0 28px rgba(255,69,58,0.4), 0 4px 16px rgba(0,0,0,0.4) !important;
     background-size: cover !important;
     background-position: center !important;
+    border-radius: var(--ios-radius-lg) !important;
   }
   .fanis.aiming {
-    box-shadow: 0 0 30px #ffeb3b, 0 0 50px #ff9800;
-    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 0 35px rgba(255,214,10,0.5), 0 0 60px rgba(255,159,10,0.3);
+    transform: translate(-50%, -50%) scale(1.06);
   }
   .fanis-type-4.aiming {
-    box-shadow: 0 0 35px #ffeb3b, 0 0 55px #ff9800 !important;
-    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 0 40px rgba(255,214,10,0.6), 0 0 70px rgba(255,159,10,0.4) !important;
+    transform: translate(-50%, -50%) scale(1.06);
   }
 
   .thermo {
@@ -116,14 +136,14 @@
     background-repeat: no-repeat;
     background-position: center;
     z-index: 4;
-    animation: thermoBob 1.2s ease-in-out infinite alternate;
-    filter: drop-shadow(0 0 6px rgba(255, 213, 79, 0.5));
+    animation: thermoBob 1.5s ease-in-out infinite alternate;
+    filter: drop-shadow(0 2px 8px rgba(255,214,10,0.4));
     contain: style paint;
     will-change: transform;
   }
   @keyframes thermoBob {
     from { transform: translateY(0) scale(1); }
-    to   { transform: translateY(-4px) scale(1.05); }
+    to   { transform: translateY(-5px) scale(1.04); }
   }
 
   .bullet {
@@ -133,257 +153,386 @@
     background-repeat: no-repeat;
     background-position: center;
     z-index: 4;
-    filter: none;
+    filter: drop-shadow(0 1px 4px rgba(255,69,58,0.3));
     transform: translate(-50%, -50%);
     contain: strict;
     will-change: transform;
+    top: 0; left: 0;
   }
-  .bullet.fast { filter: none; }
+  .bullet.fast { filter: drop-shadow(0 1px 6px rgba(255,159,10,0.4)); }
   .bullet-thermo {
     width: 60px !important;
     height: 120px !important;
-    filter: drop-shadow(0 0 10px rgba(156, 39, 176, 0.8));
+    filter: drop-shadow(0 2px 12px rgba(191,90,242,0.6));
     z-index: 5;
   }
 
   #ui {
     position: absolute;
-    top: max(8px, env(safe-area-inset-top));
-    left: 8px; right: 8px;
+    top: max(12px, calc(env(safe-area-inset-top) + 6px));
+    left: 12px; right: 12px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 15px; z-index: 30;
-    text-shadow: 0 0 6px #000;
+    font-size: 13px; z-index: 30;
     pointer-events: none; flex-wrap: wrap; gap: 6px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
   .ui-badge {
-    background: rgba(0,0,0,0.4);
-    padding: 6px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
+    background: var(--ios-surface);
+    backdrop-filter: var(--ios-blur);
+    -webkit-backdrop-filter: var(--ios-blur);
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 0.5px solid var(--ios-separator);
     display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   }
   #score-big {
-    font-size: 18px; font-weight: bold; color: #ffd54f;
-    text-shadow: 0 0 8px #ff8f00, 0 0 3px #000;
+    font-size: 16px; font-weight: 700; color: var(--ios-yellow);
+    letter-spacing: -0.02em;
   }
-  #best-score-ui { color: #4fc3f7; font-weight: bold; }
+  #best-score-ui { color: var(--ios-teal); font-weight: 600; }
+
+  /* ===== FPS СЧЁТЧИК ===== */
+  #fps-counter {
+    position: absolute;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: max(12px, env(safe-area-inset-right));
+    font-size: 11px;
+    font-weight: 600;
+    z-index: 30;
+    pointer-events: none;
+    background: var(--ios-surface);
+    backdrop-filter: var(--ios-blur);
+    -webkit-backdrop-filter: var(--ios-blur);
+    padding: 5px 10px;
+    border-radius: 100px;
+    border: 0.5px solid var(--ios-separator);
+    font-variant-numeric: tabular-nums;
+    color: var(--ios-label-secondary);
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
 
   #minimap {
     position: absolute;
-    top: max(48px, calc(env(safe-area-inset-top) + 40px));
-    right: max(10px, env(safe-area-inset-right));
-    width: 170px; height: 128px;
-    background: rgba(0,0,0,0.75);
-    border: 2px solid #666;
-    border-radius: 10px;
+    top: max(52px, calc(env(safe-area-inset-top) + 44px));
+    right: max(12px, env(safe-area-inset-right));
+    width: 160px; height: 120px;
+    background: var(--ios-surface);
+    border: 0.5px solid var(--ios-separator);
+    border-radius: var(--ios-radius-md);
     z-index: 25;
     overflow: hidden; pointer-events: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    box-sizing: border-box;
-    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    backdrop-filter: var(--ios-blur);
+    -webkit-backdrop-filter: var(--ios-blur);
   }
   #minimap::before {
     content: "КАРТА";
     position: absolute;
-    top: 3px; left: 6px;
+    top: 5px; left: 8px;
     font-size: 9px;
-    color: #aaa;
-    letter-spacing: 1px;
+    color: var(--ios-label-tertiary);
+    letter-spacing: 0.08em;
     z-index: 2;
-    font-weight: bold;
+    font-weight: 600;
+    text-transform: uppercase;
   }
   #minimap canvas { width: 100%; height: 100%; display: block; }
 
   #menu {
     position: absolute; inset: 0;
-    background: rgba(10, 10, 15, 0.92);
+    background: rgba(0, 0, 0, 0.4);
     z-index: 100;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    gap: 16px;
-    backdrop-filter: blur(12px);
+    backdrop-filter: var(--ios-blur-heavy);
+    -webkit-backdrop-filter: var(--ios-blur-heavy);
     padding: 20px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
     overflow-y: auto;
     touch-action: pan-y;
   }
-  #menu h1 {
-    font-size: 36px;
-    color: #ff1744;
-    text-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+  
+  .menu-content {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+
+  #menu .menu-header {
     text-align: center;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
+    padding: 8px 0 4px;
+  }
+  #menu h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--ios-label);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #FF453A, #FF375F, #BF5AF2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   #menu .subtitle {
-    color: #bbb;
+    color: var(--ios-label-secondary);
     font-size: 15px;
-    text-align: center;
-    margin-bottom: 10px;
+    font-weight: 400;
+    margin-top: 6px;
+    letter-spacing: -0.01em;
   }
+
+  /* ===== ТАБЫ ===== */
+  .menu-tabs {
+    display: flex;
+    width: 100%;
+    background: rgba(120,120,128,0.16);
+    border-radius: 10px;
+    padding: 2px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .menu-tab {
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: var(--ios-label-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font);
+    letter-spacing: -0.01em;
+  }
+  .menu-tab.active {
+    background: rgba(255,255,255,0.95);
+    color: #000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .menu-tab-content { display: none; flex-direction: column; gap: 12px; }
+  .menu-tab-content.active { display: flex; }
   
   .menu-section {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 16px 20px;
+    background: var(--ios-surface);
+    border: 0.5px solid var(--ios-separator);
+    border-radius: var(--ios-radius-lg);
+    padding: 16px;
     width: 100%;
-    max-width: 360px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    backdrop-filter: var(--ios-blur);
+    -webkit-backdrop-filter: var(--ios-blur);
   }
   .menu-section-title {
-    font-size: 14px;
-    color: #888;
+    font-size: 11px;
+    color: var(--ios-label-secondary);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-weight: bold;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    width: 100%;
+    text-align: left;
   }
 
   .slider-container {
-    display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;
+    display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;
   }
   input[type=range] {
-    -webkit-appearance: none; width: 100%; height: 8px; border-radius: 4px;
-    background: rgba(255,255,255,0.15); outline: none; cursor: pointer;
+    -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px;
+    background: rgba(120,120,128,0.36); outline: none; cursor: pointer;
   }
   input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
-    background: #ff1744; cursor: pointer; box-shadow: 0 0 12px rgba(255, 23, 68, 0.6);
-    transition: transform 0.1s;
+    -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%;
+    background: #ffffff; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(0,0,0,0.04);
+    transition: transform 0.15s ease;
   }
-  input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
+  input[type=range]::-webkit-slider-thumb:active { transform: scale(1.15); }
   input[type=range]::-moz-range-thumb {
-    width: 24px; height: 24px; border-radius: 50%; border: none;
-    background: #ff1744; cursor: pointer; box-shadow: 0 0 12px rgba(255, 23, 68, 0.6);
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: #ffffff; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
   #fanis-count-display {
-    font-size: 20px; font-weight: bold; color: #ff5252;
-    text-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
+    font-size: 20px; font-weight: 700; color: var(--ios-red);
+    letter-spacing: -0.02em;
   }
   #ally-count-display {
-    font-size: 20px; font-weight: bold; color: #4fc3f7;
-    text-shadow: 0 0 10px rgba(79, 195, 247, 0.4);
+    font-size: 20px; font-weight: 700; color: var(--ios-teal);
+    letter-spacing: -0.02em;
   }
 
   .skin-selector {
-    display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center;
+    display: flex; align-items: center; gap: 14px; width: 100%; justify-content: center;
   }
   .skin-btn {
-    background: rgba(79, 195, 247, 0.2);
-    border: 1px solid #4fc3f7;
-    color: #4fc3f7;
-    width: 36px; height: 36px; border-radius: 50%; font-size: 18px;
+    background: var(--ios-surface-tertiary);
+    border: none;
+    color: var(--ios-blue);
+    width: 36px; height: 36px; border-radius: 50%; font-size: 16px;
+    font-weight: 600;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
     touch-action: manipulation;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
-  .skin-btn:hover { background: #4fc3f7; color: #000; }
-  .skin-btn:active { transform: scale(0.9); }
+  .skin-btn:hover { background: var(--ios-blue); color: #fff; }
+  .skin-btn:active { transform: scale(0.88); opacity: 0.8; }
   
   .skin-preview {
-    width: 44px; height: 44px; border-radius: 50%; border: 2px solid #4fc3f7;
-    background-size: cover; background-position: center; background-color: #222;
-    box-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 2px solid var(--ios-separator);
+    background-size: cover; background-position: center; background-color: rgba(44,44,46,0.8);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
   .skin-name {
-    font-size: 16px; font-weight: bold; color: #fff; min-width: 100px; text-align: center;
+    font-size: 15px; font-weight: 600; color: var(--ios-label);
+    min-width: 100px; text-align: center;
+    letter-spacing: -0.01em;
   }
 
   #secret-code-input {
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 213, 79, 0.3);
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffd54f;
-    font-size: 16px;
+    padding: 14px 16px;
+    border-radius: var(--ios-radius-sm);
+    border: none;
+    background: var(--ios-surface-tertiary);
+    color: var(--ios-yellow);
+    font-size: 17px;
+    font-weight: 500;
     text-align: center;
     outline: none;
-    transition: border-color 0.2s;
+    font-family: var(--font);
+    letter-spacing: 0.02em;
+    transition: background 0.2s;
   }
-  #secret-code-input:focus { border-color: #ffd54f; }
-  #secret-code-input::placeholder { color: rgba(255, 213, 79, 0.4); }
+  #secret-code-input:focus { background: rgba(58,58,60,0.6); }
+  #secret-code-input::placeholder { color: var(--ios-label-tertiary); }
   #secret-code-btn {
-    background: linear-gradient(135deg, #ffd54f, #ff8f00);
+    background: linear-gradient(135deg, var(--ios-yellow), var(--ios-orange));
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 14px 24px;
+    border-radius: 100px;
     color: #000;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 15px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
     width: 100%;
+    font-family: var(--font);
+    letter-spacing: -0.01em;
+    box-shadow: 0 2px 8px rgba(255,214,10,0.2);
   }
-  #secret-code-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(255, 213, 79, 0.4); }
-  #secret-code-btn:active { transform: scale(0.98); }
+  #secret-code-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,214,10,0.3); }
+  #secret-code-btn:active { transform: scale(0.97); }
   #secret-code-message {
     font-size: 13px;
     min-height: 18px;
     text-align: center;
     transition: color 0.2s;
+    font-weight: 500;
   }
 
   #sound-btn {
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-    color: #fff; padding: 12px; font-size: 16px; border-radius: 8px;
-    cursor: pointer; transition: all 0.2s; width: 100%; max-width: 360px;
+    background: var(--ios-surface);
+    border: 0.5px solid var(--ios-separator);
+    color: var(--ios-label);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    width: 100%;
     display: flex; align-items: center; justify-content: center; gap: 8px;
+    backdrop-filter: var(--ios-blur);
+    -webkit-backdrop-filter: var(--ios-blur);
+    font-family: var(--font);
   }
-  #sound-btn:hover { background: rgba(255,255,255,0.15); }
+  #sound-btn:hover { background: var(--ios-surface-secondary); }
+  #sound-btn:active { transform: scale(0.97); }
 
   #start-btn {
-    margin-top: 10px; background: linear-gradient(135deg, #4fc3f7, #0288d1);
-    color: #fff; border: none; padding: 16px 60px; font-size: 22px; font-weight: bold;
-    border-radius: 12px; cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4); letter-spacing: 1px;
-    width: 100%; max-width: 360px;
+    background: linear-gradient(135deg, var(--ios-blue), #5856D6);
+    color: #fff; border: none;
+    padding: 16px 60px; font-size: 19px; font-weight: 700;
+    border-radius: 100px; cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 4px 20px rgba(0,122,255,0.3);
+    letter-spacing: -0.01em;
+    width: 100%;
+    font-family: var(--font);
   }
-  #start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(79, 195, 247, 0.6); }
-  #start-btn:active { transform: translateY(0) scale(0.98); }
+  #start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0,122,255,0.4); }
+  #start-btn:active { transform: scale(0.97); }
 
   #message {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-size: 22px; text-align: center; z-index: 40; display: none;
-    background: rgba(10, 10, 15, 0.96); padding: 30px 36px; border-radius: 16px;
-    border: 2px solid #ff1744; box-shadow: 0 0 40px rgba(255, 23, 68, 0.3);
-    max-width: 92%; max-height: 90%; overflow-y: auto; touch-action: pan-y;
-    backdrop-filter: blur(10px);
+    font-size: 17px; text-align: center; z-index: 40; display: none;
+    background: var(--ios-surface);
+    padding: 28px 32px;
+    border-radius: var(--ios-radius-xl);
+    border: 0.5px solid var(--ios-separator);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    max-width: 320px; max-height: 90%; overflow-y: auto; touch-action: pan-y;
+    backdrop-filter: var(--ios-blur-heavy);
+    -webkit-backdrop-filter: var(--ios-blur-heavy);
+    letter-spacing: -0.01em;
   }
   #message button {
-    margin-top: 20px; padding: 14px 36px; font-size: 18px; cursor: pointer;
-    background: linear-gradient(135deg, #4fc3f7, #0288d1); border: none; border-radius: 8px;
-    color: #fff; font-weight: bold; min-width: 200px; touch-action: manipulation;
-    transition: transform 0.1s;
+    margin-top: 20px; padding: 14px 36px; font-size: 17px; cursor: pointer;
+    background: linear-gradient(135deg, var(--ios-blue), #5856D6);
+    border: none; border-radius: 100px;
+    color: #fff; font-weight: 600; min-width: 200px; touch-action: manipulation;
+    transition: all 0.15s; font-family: var(--font);
+    box-shadow: 0 2px 8px rgba(0,122,255,0.2);
   }
   #message button:active { transform: scale(0.95); }
 
   #joystick {
-    position: absolute; bottom: calc(20px + env(safe-area-inset-bottom)); left: 20px;
-    width: 130px; height: 130px; border-radius: 50%;
-    background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.2);
-    z-index: 35; display: none; touch-action: none; backdrop-filter: blur(4px);
+    position: absolute; bottom: calc(24px + env(safe-area-inset-bottom)); left: 24px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(120,120,128,0.16);
+    border: 1px solid rgba(120,120,128,0.24);
+    z-index: 35; display: none; touch-action: none;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
   #stick {
-    position: absolute; top: 50%; left: 50%; width: 56px; height: 56px;
-    margin-left: -28px; margin-top: -28px; background: rgba(79,195,247,0.6);
-    border-radius: 50%; border: 2px solid #b3e5fc;
-    box-shadow: 0 0 15px rgba(79, 195, 247, 0.5); pointer-events: none; will-change: transform;
+    position: absolute; top: 50%; left: 50%; width: 52px; height: 52px;
+    margin-left: -26px; margin-top: -26px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    pointer-events: none; will-change: transform;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
   #dashBtn {
-    position: absolute; bottom: calc(30px + env(safe-area-inset-bottom)); right: 20px;
-    width: 90px; height: 90px; border-radius: 50%; background: rgba(255,23,68,0.3);
-    border: 2px solid rgba(255,82,82,0.8); color: #fff; font-size: 14px; font-weight: bold;
+    position: absolute; bottom: calc(32px + env(safe-area-inset-bottom)); right: 24px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,69,58,0.2);
+    border: 1px solid rgba(255,69,58,0.4);
+    color: #fff; font-size: 12px; font-weight: 700;
     z-index: 35; display: none; align-items: center; justify-content: center;
-    text-shadow: 0 0 4px #000; touch-action: none; cursor: pointer; user-select: none;
-    backdrop-filter: blur(4px); transition: all 0.2s;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3); touch-action: none; cursor: pointer; user-select: none;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    transition: all 0.15s;
+    font-family: var(--font);
+    letter-spacing: -0.01em;
   }
-  #dashBtn:active { transform: scale(0.9); background: rgba(255,23,68,0.5); }
-  #dashBtn.cooling { opacity: 0.3; border-color: #666; background: rgba(100,100,100,0.2); }
+  #dashBtn:active { transform: scale(0.9); background: rgba(255,69,58,0.4); }
+  #dashBtn.cooling { opacity: 0.25; border-color: rgba(120,120,128,0.3); background: rgba(120,120,128,0.1); }
   
   body.touch #joystick { display: block; }
   body.touch #dashBtn { display: flex; }
@@ -391,24 +540,31 @@
   @media (max-width: 500px) {
     #joystick { width: 110px; height: 110px; }
     #stick { width: 48px; height: 48px; margin-left: -24px; margin-top: -24px; }
-    #dashBtn { width: 80px; height: 80px; font-size: 13px; }
-    #minimap { width: 120px; height: 90px; top: max(44px, calc(env(safe-area-inset-top) + 38px)); }
-    #ui { font-size: 13px; }
-    #score-big { font-size: 16px; }
-    #message { font-size: 18px; padding: 24px; }
-    #message button { font-size: 16px; padding: 12px 28px; }
+    #dashBtn { width: 72px; height: 72px; font-size: 11px; bottom: calc(28px + env(safe-area-inset-bottom)); }
+    #minimap { width: 120px; height: 90px; top: max(48px, calc(env(safe-area-inset-top) + 40px)); }
+    #ui { font-size: 11px; gap: 4px; }
+    #score-big { font-size: 14px; }
+    #fps-counter { font-size: 10px; padding: 4px 8px; }
+    #message { font-size: 15px; padding: 24px; max-width: 290px; }
+    #message button { font-size: 15px; padding: 12px 28px; }
     #player { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
     .ally { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
     .fanis { width: 68px; height: 94px; }
-    #menu h1 { font-size: 28px; }
-    .skin-preview { width: 38px; height: 38px; }
-    .skin-name { font-size: 14px; min-width: 80px; }
+    #menu h1 { font-size: 26px; }
+    .skin-preview { width: 40px; height: 40px; }
+    .skin-name { font-size: 13px; min-width: 80px; }
+    .menu-section { padding: 14px; }
   }
 
   #hint {
     position: absolute; bottom: max(10px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right));
-    font-size: 12px; opacity: 0.5; z-index: 30; pointer-events: none; text-align: right;
-    max-width: 220px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;
+    font-size: 11px; opacity: 0.4; z-index: 30; pointer-events: none; text-align: right;
+    max-width: 220px;
+    background: var(--ios-surface);
+    padding: 8px 12px; border-radius: var(--ios-radius-sm);
+    backdrop-filter: var(--ios-blur); -webkit-backdrop-filter: var(--ios-blur);
+    border: 0.5px solid var(--ios-separator);
+    font-weight: 500;
   }
   body.touch #hint { display: none; }
 </style>
@@ -425,86 +581,103 @@
     <div class="ui-badge">время <span id="timer">0.0</span></div>
   </div>
   <div id="minimap"><canvas id="mmcanvas" width="170" height="128"></canvas></div>
+  <div id="fps-counter">-- FPS</div>
   
   <div id="menu">
-    <h1>В ДОМ ФАНИСА</h1>
-    <div class="subtitle">Собирай термометры и не фанис!</div>
-    
-    <div class="menu-section">
-      <div class="menu-section-title">Количество Фанисов</div>
-      <div class="slider-container">
-        <input type="range" id="fanis-count-slider" min="1" max="10" value="4">
-        <span id="fanis-count-display">4 Фаниса</span>
+    <div class="menu-content">
+      <div class="menu-header">
+        <h1>В ДОМ ФАНИСА</h1>
+        <div class="subtitle">Собирай термометры и не фанис!</div>
+      </div>
+
+      <!-- ТАБЫ -->
+      <div class="menu-tabs">
+        <button class="menu-tab active" data-tab="game">Игра</button>
+        <button class="menu-tab" data-tab="skins">Скины</button>
+      </div>
+
+      <!-- ВКЛАДКА: ИГРА -->
+      <div class="menu-tab-content active" data-tab-content="game">
+        <div class="menu-section">
+          <div class="menu-section-title">Количество Фанисов</div>
+          <div class="slider-container">
+            <input type="range" id="fanis-count-slider" min="1" max="10" value="4">
+            <span id="fanis-count-display">4 Фаниса</span>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">больше рабовайци</div>
+          <div class="slider-container">
+            <input type="range" id="ally-count-slider" min="0" max="10" value="0">
+            <span id="ally-count-display">0 работы</span>
+          </div>
+        </div>
+
+        <button id="sound-btn">🔊 Звук: ВКЛ</button>
+        <button id="start-btn">НАЧАТЬ Фаниса</button>
+      </div>
+
+      <!-- ВКЛАДКА: СКИНЫ -->
+      <div class="menu-tab-content" data-tab-content="skins">
+        <div class="menu-section">
+          <div class="menu-section-title">Скин увамина</div>
+          <div class="skin-selector">
+            <button class="skin-btn" data-type="player" data-dir="-1">◀</button>
+            <div class="skin-preview" id="player-skin-preview"></div>
+            <span id="player-skin-name" class="skin-name">Стандарт</span>
+            <button class="skin-btn" data-type="player" data-dir="1">▶</button>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Скин Фаниса</div>
+          <div class="skin-selector">
+            <button class="skin-btn" data-type="fanis" data-dir="-1">◀</button>
+            <div class="skin-preview" id="fanis-skin-preview"></div>
+            <span id="fanis-skin-name" class="skin-name">Стандарт</span>
+            <button class="skin-btn" data-type="fanis" data-dir="1">▶</button>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Скин термометра</div>
+          <div class="skin-selector">
+            <button class="skin-btn" data-type="thermo" data-dir="-1">◀</button>
+            <div class="skin-preview" id="thermo-skin-preview"></div>
+            <span id="thermo-skin-name" class="skin-name">Стандарт</span>
+            <button class="skin-btn" data-type="thermo" data-dir="1">▶</button>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Скин пули</div>
+          <div class="skin-selector">
+            <button class="skin-btn" data-type="bullet" data-dir="-1">◀</button>
+            <div class="skin-preview" id="bullet-skin-preview"></div>
+            <span id="bullet-skin-name" class="skin-name">Стандарт</span>
+            <button class="skin-btn" data-type="bullet" data-dir="1">▶</button>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Скин пола</div>
+          <div class="skin-selector">
+            <button class="skin-btn" data-type="floor" data-dir="-1">◀</button>
+            <div class="skin-preview" id="floor-skin-preview"></div>
+            <span id="floor-skin-name" class="skin-name">Стандарт</span>
+            <button class="skin-btn" data-type="floor" data-dir="1">▶</button>
+          </div>
+        </div>
+
+        <div class="menu-section" style="border-color: rgba(255,214,10,0.2);">
+          <div class="menu-section-title" style="color: var(--ios-yellow);">коды вод</div>
+          <input type="text" id="secret-code-input" placeholder="Введи код..." autocomplete="off">
+          <button id="secret-code-btn">Актиделай</button>
+          <div id="secret-code-message"></div>
+        </div>
       </div>
     </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">больше рабовайци</div>
-      <div class="slider-container">
-        <input type="range" id="ally-count-slider" min="0" max="10" value="0">
-        <span id="ally-count-display">0 работы</span>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Скин увамина</div>
-      <div class="skin-selector">
-        <button class="skin-btn" data-type="player" data-dir="-1">◀</button>
-        <div class="skin-preview" id="player-skin-preview"></div>
-        <span id="player-skin-name" class="skin-name">Стандарт</span>
-        <button class="skin-btn" data-type="player" data-dir="1">▶</button>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Скин Фаниса</div>
-      <div class="skin-selector">
-        <button class="skin-btn" data-type="fanis" data-dir="-1">◀</button>
-        <div class="skin-preview" id="fanis-skin-preview"></div>
-        <span id="fanis-skin-name" class="skin-name">Стандарт</span>
-        <button class="skin-btn" data-type="fanis" data-dir="1">▶</button>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Скин термометра</div>
-      <div class="skin-selector">
-        <button class="skin-btn" data-type="thermo" data-dir="-1">◀</button>
-        <div class="skin-preview" id="thermo-skin-preview"></div>
-        <span id="thermo-skin-name" class="skin-name">Стандарт</span>
-        <button class="skin-btn" data-type="thermo" data-dir="1">▶</button>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Скин пули</div>
-      <div class="skin-selector">
-        <button class="skin-btn" data-type="bullet" data-dir="-1">◀</button>
-        <div class="skin-preview" id="bullet-skin-preview"></div>
-        <span id="bullet-skin-name" class="skin-name">Стандарт</span>
-        <button class="skin-btn" data-type="bullet" data-dir="1">▶</button>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Скин пола</div>
-      <div class="skin-selector">
-        <button class="skin-btn" data-type="floor" data-dir="-1">◀</button>
-        <div class="skin-preview" id="floor-skin-preview"></div>
-        <span id="floor-skin-name" class="skin-name">Стандарт</span>
-        <button class="skin-btn" data-type="floor" data-dir="1">▶</button>
-      </div>
-    </div>
-
-    <div class="menu-section" style="border-color: rgba(255, 213, 79, 0.3);">
-      <div class="menu-section-title" style="color: #ffd54f;">коды вод</div>
-      <input type="text" id="secret-code-input" placeholder="Введи код..." autocomplete="off">
-      <button id="secret-code-btn">Актиделай</button>
-      <div id="secret-code-message"></div>
-    </div>
-    
-    <button id="sound-btn">🔊 Звук: ВКЛ</button>
-    <button id="start-btn">НАЧАТЬ Фаниса</button>
   </div>
 
   <div id="message"></div>
@@ -621,6 +794,7 @@
   const fanisCountDisplay = document.getElementById('fanis-count-display');
   const allySlider = document.getElementById('ally-count-slider');
   const allyCountDisplay = document.getElementById('ally-count-display');
+  const fpsEl = document.getElementById('fps-counter');
 
   let audioCtx = null, soundEnabled = true;
   let bgMusicNode = null, bgOsc = null, bgFilter = null;
@@ -716,6 +890,17 @@
     else { stopBgMusic(); }
   });
 
+  // ===== ТАБЫ МЕНЮ =====
+  document.querySelectorAll('.menu-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.menu-tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelector(`.menu-tab-content[data-tab-content="${target}"]`).classList.add('active');
+    });
+  });
+
   const W = 2400, H = 1800;
   const P_SIZE = 56, F_SIZE = 80, F_HEIGHT = 110, ALLY_SIZE = 56;
   const PLAYER_SPEED = 4.2;
@@ -754,6 +939,22 @@
   const keys = Object.create(null);
   let joyActive = false, joyVX = 0, joyVY = 0;
   let minimapFrame = 0, viewZoom = 1;
+
+  // ===== FPS СЧЁТЧИК =====
+  let fpsFrames = 0;
+  let fpsLastTime = performance.now();
+  let currentFps = 60;
+  
+  function updateFps(now) {
+    fpsFrames++;
+    const elapsed = now - fpsLastTime;
+    if (elapsed >= 500) {
+      currentFps = Math.round(fpsFrames * 1000 / elapsed);
+      fpsEl.textContent = `${currentFps} FPS`;
+      fpsFrames = 0;
+      fpsLastTime = now;
+    }
+  }
   
   function updateViewZoom() {
     const vw = viewport.clientWidth, vh = viewport.clientHeight;
@@ -764,13 +965,54 @@
     else viewZoom = 1;
   }
 
+  // ===== OBJECT POOL ДЛЯ ПУЛЬ =====
+  const BULLET_POOL_SIZE = 200;
+  const bulletPool = [];
+  
+  function initBulletPool() {
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < BULLET_POOL_SIZE; i++) {
+      const el = document.createElement('div');
+      el.className = 'bullet';
+      el.style.display = 'none';
+      frag.appendChild(el);
+      bulletPool.push({ el, active: false, x: 0, y: 0, vx: 0, vy: 0, piercesWalls: false });
+    }
+    world.appendChild(frag);
+  }
+  
+  function getBullet() {
+    for (let i = 0; i < bulletPool.length; i++) {
+      if (!bulletPool[i].active) {
+        const b = bulletPool[i];
+        b.active = true;
+        b.el.style.display = '';
+        return b;
+      }
+    }
+    // Расширяем пул если нужно
+    const el = document.createElement('div');
+    el.className = 'bullet';
+    world.appendChild(el);
+    const b = { el, active: true, x: 0, y: 0, vx: 0, vy: 0, piercesWalls: false };
+    bulletPool.push(b);
+    return b;
+  }
+  
+  function releaseBullet(b) {
+    b.active = false;
+    b.el.style.display = 'none';
+  }
+
   function circleRect(cx, cy, r, rect) {
     const nx = Math.max(rect.x, Math.min(cx, rect.x + rect.w));
     const ny = Math.max(rect.y, Math.min(cy, rect.y + rect.h));
     return (cx - nx) ** 2 + (cy - ny) ** 2 < r * r;
   }
   function hitsWall(cx, cy, r) {
-    for (const w of WALLS) if (circleRect(cx, cy, r - 1, w)) return true;
+    for (let i = 0; i < WALLS.length; i++) {
+      if (circleRect(cx, cy, r - 1, WALLS[i])) return true;
+    }
     return false;
   }
   function tryMove(obj, dx, dy, r) {
@@ -800,19 +1042,24 @@
            segSeg(ax, ay, bx, by, rect.x, y2, rect.x, rect.y);
   }
   function hasLineOfSight(ax, ay, bx, by) {
-    for (const w of WALLS) if (segIntersectsRect(ax, ay, bx, by, w)) return false;
+    for (let i = 0; i < WALLS.length; i++) {
+      if (segIntersectsRect(ax, ay, bx, by, WALLS[i])) return false;
+    }
     return true;
   }
 
   function buildWalls() {
     world.querySelectorAll('.wall').forEach(e => e.remove());
-    for (const w of WALLS) {
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < WALLS.length; i++) {
+      const w = WALLS[i];
       const el = document.createElement('div');
       el.className = 'wall';
       el.style.left = w.x + 'px'; el.style.top = w.y + 'px';
       el.style.width = w.w + 'px'; el.style.height = w.h + 'px';
-      world.appendChild(el);
+      frag.appendChild(el);
     }
+    world.appendChild(frag);
   }
 
   const CELL = 60, COLS = Math.ceil(W / CELL), ROWS = Math.ceil(H / CELL);
@@ -903,7 +1150,8 @@
         return cells;
       }
       const cg = gScore.get(ck) ?? Infinity;
-      for (const [dx, dy] of DIRS) {
+      for (let d = 0; d < DIRS.length; d++) {
+        const dx = DIRS[d][0], dy = DIRS[d][1];
         const nx = cur.cx + dx, ny = cur.cy + dy;
         if (!walkable(nx, ny)) continue;
         if (dx !== 0 && dy !== 0 && (!walkable(cur.cx + dx, cur.cy) || !walkable(cur.cx, cur.cy + dy))) continue;
@@ -937,12 +1185,14 @@
       if (hitsWall(cx, cy, rr)) continue;
       if (Math.hypot(cx - px, cy - py) < 150) continue;
       let nearFanis = false;
-      for (const f of fanises) {
+      for (let i = 0; i < fanises.length; i++) {
+        const f = fanises[i];
         if (Math.hypot(cx - f.x, cy - f.y) < 250) { nearFanis = true; break; }
       }
       if (nearFanis) continue;
       let near = false;
-      for (const t of thermos) {
+      for (let i = 0; i < thermos.length; i++) {
+        const t = thermos[i];
         if (Math.hypot(cx - (t.x + t.style.w/2), cy - (t.y + t.style.h/2)) < 110) { near = true; break; }
       }
       if (near) continue;
@@ -966,14 +1216,13 @@
     onfieldEl.textContent = thermos.length;
   }
   function clearThermos() {
-    thermos.forEach(t => t.el.remove());
+    for (let i = 0; i < thermos.length; i++) thermos[i].el.remove();
     thermos = [];
     onfieldEl.textContent = '0';
   }
 
-  // ===== ИСПРАВЛЕННЫЙ СПАВН ФАНИСОВ: f.x, f.y = ЦЕНТР =====
   function spawnFanises(count) {
-    fanises.forEach(f => f.el.remove());
+    for (let i = 0; i < fanises.length; i++) fanises[i].el.remove();
     fanises = [];
     const isRandomMode = (currentFanisSkinIdx === FANIS_SKINS.length - 1);
 
@@ -1002,11 +1251,9 @@
       
       const el = document.createElement('div');
       el.className = 'fanis fanis-type-' + type;
-      // Позиционируем по ЦЕНТРУ
-      el.style.left = (sx + ALLY_SIZE/2) + 'px';
-el.style.top = (sy + ALLY_SIZE/2) + 'px';
+      el.style.left = sx + 'px'; 
+      el.style.top = sy + 'px';
       
-      // Термофанис: текстура термометра в форме фаниса
       if (type === FANIS_TYPE.THERMO) {
         el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
       } else {
@@ -1046,7 +1293,6 @@ el.style.top = (sy + ALLY_SIZE/2) + 'px';
           break;
       }
       
-      // f.x, f.y теперь ЦЕНТР фаниса
       fanises.push({
         x: sx, y: sy, el, type,
         path: [], pathIndex: 0, pathTimer: 0,
@@ -1060,7 +1306,7 @@ el.style.top = (sy + ALLY_SIZE/2) + 'px';
   }
 
   function spawnAllies(count) {
-    allies.forEach(a => a.el.remove());
+    for (let i = 0; i < allies.length; i++) allies[i].el.remove();
     allies = [];
     for (let i = 0; i < count; i++) {
       const angle = (i / Math.max(1, count)) * Math.PI * 2;
@@ -1087,13 +1333,16 @@ el.style.top = (sy + ALLY_SIZE/2) + 'px';
   }
 
   function updateAllies(dt) {
-    for (const ally of allies) {
+    const speed = 3.0 * dt;
+    for (let i = 0; i < allies.length; i++) {
+      const ally = allies[i];
       if (!ally.alive) continue;
       let mx = 0, my = 0;
       ally.wanderAngle += (Math.random() - 0.5) * 0.4;
       mx = Math.cos(ally.wanderAngle);
       my = Math.sin(ally.wanderAngle);
-      for (const b of bullets) {
+      for (let j = 0; j < bullets.length; j++) {
+        const b = bullets[j];
         const dist = Math.hypot(b.x - ally.x, b.y - ally.y);
         if (dist < 130) {
           const angle = Math.atan2(ally.y - b.y, ally.x - b.x);
@@ -1103,12 +1352,11 @@ el.style.top = (sy + ALLY_SIZE/2) + 'px';
       }
       const len = Math.hypot(mx, my);
       if (len > 1) { mx /= len; my /= len; }
-      const speed = 3.0 * dt;
       const obj = { x: ally.x, y: ally.y };
       tryMove(obj, mx * speed, my * speed, ALLY_SIZE / 2);
       ally.x = obj.x; ally.y = obj.y;
       ally.el.style.left = (ally.x + ALLY_SIZE/2) + 'px';
-ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
+      ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     }
   }
 
@@ -1117,8 +1365,8 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     if (skin.useGradient) {
       world.style.backgroundImage = '';
       world.style.background = 
-        'repeating-linear-gradient(0deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px),' +
-        'repeating-linear-gradient(90deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px)';
+        'repeating-linear-gradient(0deg, rgba(28,28,30,0.3) 0px, rgba(28,28,30,0.3) 60px, rgba(20,20,22,0.3) 60px, rgba(20,20,22,0.3) 61px),' +
+        'repeating-linear-gradient(90deg, rgba(28,28,30,0.3) 0px, rgba(28,28,30,0.3) 60px, rgba(20,20,22,0.3) 60px, rgba(20,20,22,0.3) 61px)';
     } else {
       world.style.background = '';
       world.style.backgroundImage = `url('${skin.url}')`;
@@ -1130,8 +1378,8 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
       if (skin.useGradient) {
         preview.style.backgroundImage = '';
         preview.style.background = 
-          'repeating-linear-gradient(0deg, #1a1a24 0px, #1a1a24 15px, #161620 15px, #161620 16px),' +
-          'repeating-linear-gradient(90deg, #1a1a24 0px, #1a1a24 15px, #161620 15px, #161620 16px)';
+          'repeating-linear-gradient(0deg, rgba(28,28,30,0.5) 0px, rgba(28,28,30,0.5) 15px, rgba(20,20,22,0.5) 15px, rgba(20,20,22,0.5) 16px),' +
+          'repeating-linear-gradient(90deg, rgba(28,28,30,0.5) 0px, rgba(28,28,30,0.5) 15px, rgba(20,20,22,0.5) 15px, rgba(20,20,22,0.5) 16px)';
       } else {
         preview.style.background = '';
         preview.style.backgroundImage = `url('${skin.url}')`;
@@ -1183,10 +1431,10 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     return `${count} Фанисов`;
   }
   function getAllyText(count) {
-    if (count === 0) return "0 друзей";
-    if (count === 1) return "1 друг";
-    if (count >= 2 && count <= 4) return `${count} друга`;
-    return `${count} друзей`;
+    if (count === 0) return "0 работы";
+    if (count === 1) return "1 работа";
+    if (count >= 2 && count <= 4) return `${count} работы`;
+    return `${count} работ`;
   }
 
   fanisSlider.addEventListener('input', () => {
@@ -1214,13 +1462,13 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     if (VALID_CODES.includes(code)) {
       saveUnlockedCode(code);
       secretCodeMsg.textContent = '✓ Код активирован! Скины разблокированы';
-      secretCodeMsg.style.color = '#69f0ae';
+      secretCodeMsg.style.color = '#30D158';
       secretCodeInput.value = '';
       playTone(800, 'sine', 0.3, 0.1, 1200, 2000);
       updateSkinUI();
     } else {
       secretCodeMsg.textContent = '✗ Неверный код';
-      secretCodeMsg.style.color = '#ff5252';
+      secretCodeMsg.style.color = '#FF453A';
       playTone(200, 'sawtooth', 0.2, 0.08, 100, 500);
     }
   });
@@ -1239,7 +1487,10 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     score = 0; scoreEl.textContent = '0';
     startTime = null; running = true;
     dashCooldown = 0; dashActive = 0;
-    bullets.forEach(b => b.el.remove());
+    // Освобождаем все пули в пуле
+    for (let i = 0; i < bulletPool.length; i++) {
+      if (bulletPool[i].active) releaseBullet(bulletPool[i]);
+    }
     bullets = [];
     clearThermos();
     messageEl.style.display = 'none';
@@ -1278,10 +1529,9 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     applyCamera();
   }
 
-  // ===== ИСПРАВЛЕННЫЕ ХИТБОКСЫ: f.x, f.y = центр =====
   function moveFanis(f, dt) {
-    const fcx = f.x, fcy = f.y; // уже центр
-    const targetX = px, targetY = py; // центр игрока
+    const fcx = f.x, fcy = f.y;
+    const targetX = px, targetY = py;
     const dist = Math.hypot(targetX - fcx, targetY - fcy);
     f.targetX = targetX; f.targetY = targetY;
     
@@ -1325,12 +1575,11 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     f.el.style.left = f.x + 'px';
     f.el.style.top = f.y + 'px';
 
-    // Касание игрока
     if (Math.hypot(px - fcx, py - fcy) < (P_SIZE + F_SIZE) / 2 - 8) {
       gameOver('КАСАНИЕ');
     }
-    // Касание союзников
-    for (const ally of allies) {
+    for (let i = 0; i < allies.length; i++) {
+      const ally = allies[i];
       if (!ally.alive) continue;
       if (Math.hypot(ally.x - fcx, ally.y - fcy) < (ALLY_SIZE + F_SIZE) / 2 - 8) {
         ally.alive = false;
@@ -1351,12 +1600,12 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
         const angle = (i / 16) * Math.PI * 2;
         const vx = Math.cos(angle) * bulletSpeed;
         const vy = Math.sin(angle) * bulletSpeed;
-        const el = document.createElement('div');
-        el.className = 'bullet';
-        el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
-        el.style.left = fcx + 'px'; el.style.top = fcy + 'px';
-        world.appendChild(el);
-        bullets.push({ x: fcx, y: fcy, vx, vy, el, piercesWalls: false });
+        const b = getBullet();
+        b.el.className = 'bullet';
+        b.el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
+        b.el.style.left = fcx + 'px'; b.el.style.top = fcy + 'px';
+        b.x = fcx; b.y = fcy; b.vx = vx; b.vy = vy; b.piercesWalls = false;
+        bullets.push(b);
       }
       playSound('shoot', 0.6);
       return true;
@@ -1392,19 +1641,19 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
       const vx = (nx * cos - ny * sin) * bulletSpeed;
       const vy = (nx * sin + ny * cos) * bulletSpeed;
       if (hitsWall(fcx, fcy, 12)) continue;
-      const el = document.createElement('div');
+      const b = getBullet();
       if (f.type === FANIS_TYPE.SNIPER) {
         const availableSkins = getVisibleThermoSkins();
         const randomIdx = Math.floor(Math.random() * availableSkins.length);
-        el.className = 'bullet bullet-thermo';
-        el.style.backgroundImage = `url('${availableSkins[randomIdx].url}')`;
+        b.el.className = 'bullet bullet-thermo';
+        b.el.style.backgroundImage = `url('${availableSkins[randomIdx].url}')`;
       } else {
-        el.className = 'bullet' + (count > 1 ? ' fast' : '');
-        el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
+        b.el.className = 'bullet' + (count > 1 ? ' fast' : '');
+        b.el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
       }
-      el.style.left = fcx + 'px'; el.style.top = fcy + 'px';
-      world.appendChild(el);
-      bullets.push({ x: fcx, y: fcy, vx, vy, el, piercesWalls: f.piercesWalls });
+      b.el.style.left = fcx + 'px'; b.el.style.top = fcy + 'px';
+      b.x = fcx; b.y = fcy; b.vx = vx; b.vy = vy; b.piercesWalls = f.piercesWalls;
+      bullets.push(b);
     }
     playSound('shoot', 0.6); 
     return true;
@@ -1421,25 +1670,31 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
         const nx = b.x + dx / substeps, ny = b.y + dy / substeps;
         let hit = false;
         if (!b.piercesWalls) {
-          for (const w of WALLS) if (circleRect(nx, ny, 12, w)) { hit = true; break; }
+          for (let w = 0; w < WALLS.length; w++) {
+            if (circleRect(nx, ny, 12, WALLS[w])) { hit = true; break; }
+          }
         }
         if (hit || nx < -20 || nx > W + 20 || ny < -20 || ny > H + 20) {
-          b.el.remove(); bullets.splice(i, 1); removed = true; 
+          releaseBullet(b);
+          bullets.splice(i, 1); removed = true; 
           if (hit) playTone(80, 'triangle', 0.1, 0.05, null, 200); 
           break;
         }
         b.x = nx; b.y = ny;
         if (Math.hypot(px - b.x, py - b.y) < P_SIZE/2 + 12) {
-          b.el.remove(); bullets.splice(i, 1); removed = true;
+          releaseBullet(b);
+          bullets.splice(i, 1); removed = true;
           gameOver('ПУЛЯ');
           return;
         }
-        for (const ally of allies) {
+        for (let a = 0; a < allies.length; a++) {
+          const ally = allies[a];
           if (!ally.alive) continue;
           if (Math.hypot(ally.x - b.x, ally.y - b.y) < ALLY_SIZE/2 + 12) {
             ally.alive = false;
             ally.el.classList.add('dead');
-            b.el.remove(); bullets.splice(i, 1); removed = true;
+            releaseBullet(b);
+            bullets.splice(i, 1); removed = true;
             playTone(300, 'sawtooth', 0.3, 0.1, 100, 500);
             break;
           }
@@ -1456,6 +1711,8 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     const dt = Math.min((now - lastTime) / 16.67, 3);
     lastTime = now;
     timerEl.textContent = ((now - startTime) / 1000).toFixed(1);
+
+    updateFps(now);
 
     if (dashCooldown > 0) {
       dashCooldown -= dt;
@@ -1493,7 +1750,8 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
 
     updateAllies(dt);
 
-    for (const f of fanises) {
+    for (let i = 0; i < fanises.length; i++) {
+      const f = fanises[i];
       moveFanis(f, dt);
       if (f.shootCooldown > 0) f.shootCooldown -= dt;
       if (f.aimTimer > 0) {
@@ -1544,37 +1802,48 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     }
 
     updateCamera();
-    if (++minimapFrame % 3 === 0) drawMinimap();
+    // FPS-адаптивная миникарта
+    const minimapInterval = currentFps < 30 ? 6 : currentFps < 50 ? 4 : 3;
+    if (++minimapFrame >= minimapInterval) {
+      minimapFrame = 0;
+      drawMinimap();
+    }
     rafId = requestAnimationFrame(loop);
   }
 
   function drawMinimap() {
     const s = Math.min(mmCanvas.width / W, mmCanvas.height / H);
     mmCtx.clearRect(0, 0, mmCanvas.width, mmCanvas.height);
-    mmCtx.fillStyle = 'rgba(0,0,0,0.6)';
+    mmCtx.fillStyle = 'rgba(0,0,0,0.5)';
     mmCtx.fillRect(0, 0, mmCanvas.width, mmCanvas.height);
-    mmCtx.fillStyle = '#555';
-    for (const w of WALLS) mmCtx.fillRect(w.x * s, w.y * s, Math.max(1, w.w * s), Math.max(1, w.h * s));
-    mmCtx.fillStyle = '#ffd54f'; 
-    for (const t of thermos) {
+    mmCtx.fillStyle = 'rgba(142,142,147,0.4)';
+    for (let i = 0; i < WALLS.length; i++) {
+      const w = WALLS[i];
+      mmCtx.fillRect(w.x * s, w.y * s, Math.max(1, w.w * s), Math.max(1, w.h * s));
+    }
+    mmCtx.fillStyle = '#FFD60A'; 
+    for (let i = 0; i < thermos.length; i++) {
+      const t = thermos[i];
       mmCtx.beginPath();
       mmCtx.arc((t.x + t.style.w/2) * s, (t.y + t.style.h/2) * s, 2.5, 0, 7);
       mmCtx.fill();
     }
-    mmCtx.fillStyle = '#4fc3f7';
-    for (const ally of allies) {
+    mmCtx.fillStyle = '#64D2FF';
+    for (let i = 0; i < allies.length; i++) {
+      const ally = allies[i];
       if (!ally.alive) continue;
       mmCtx.beginPath();
       mmCtx.arc(ally.x * s, ally.y * s, 3, 0, 7);
       mmCtx.fill();
     }
-    for (const f of fanises) {
+    for (let i = 0; i < fanises.length; i++) {
+      const f = fanises[i];
       switch (f.type) {
-        case FANIS_TYPE.CLASSIC: mmCtx.fillStyle = '#ff5252'; break;
-        case FANIS_TYPE.SNIPER:  mmCtx.fillStyle = '#b388ff'; break;
-        case FANIS_TYPE.BERSERK: mmCtx.fillStyle = '#69f0ae'; break;
-        case FANIS_TYPE.THERMO:  mmCtx.fillStyle = '#ff1744'; break;
-        default: mmCtx.fillStyle = '#ff5252';
+        case FANIS_TYPE.CLASSIC: mmCtx.fillStyle = '#FF453A'; break;
+        case FANIS_TYPE.SNIPER:  mmCtx.fillStyle = '#BF5AF2'; break;
+        case FANIS_TYPE.BERSERK: mmCtx.fillStyle = '#30D158'; break;
+        case FANIS_TYPE.THERMO:  mmCtx.fillStyle = '#FF453A'; break;
+        default: mmCtx.fillStyle = '#FF453A';
       }
       mmCtx.beginPath();
       mmCtx.arc(f.x * s, f.y * s, 4, 0, 7);
@@ -1612,8 +1881,8 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     const time = timerEl.textContent;
     const reasonText = reason === 'ПУЛЯ' ? 'Тебя фани бах!' : 'Фанис тут бах!';
     messageEl.innerHTML = `у ${reasonText}<br><br>
-       Очки: <b style="color:#ffd54f; font-size: 28px;">${score}</b><br>
-       ва Лучший счет: <b style="color:#4fc3f7; font-size: 22px;">${bestScore}</b><br>
+       Очки: <b style="color:#FFD60A; font-size: 28px;">${score}</b><br>
+       ва Лучший счет: <b style="color:#64D2FF; font-size: 22px;">${bestScore}</b><br>
        Время: ${time} с<br><br>
       <button id="restart">В главное меню</button>`;
     document.getElementById('restart').onclick = () => {
@@ -1708,7 +1977,15 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
   dashBtn.addEventListener('touchstart', onDash, { passive: false });
   dashBtn.addEventListener('click', onDash);
 
-  window.addEventListener('resize', () => { updateViewZoom(); applyCamera(); });
+  // Debounced resize
+  let resizeTimeout = null;
+  window.addEventListener('resize', () => {
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      updateViewZoom();
+      applyCamera();
+    }, 150);
+  });
   window.addEventListener('orientationchange', () => setTimeout(() => { updateViewZoom(); applyCamera(); }, 100));
   document.addEventListener('gesturestart', e => e.preventDefault());
   document.addEventListener('dblclick', e => e.preventDefault());
@@ -1724,6 +2001,7 @@ ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
   allyCountDisplay.textContent = getAllyText(allyCount);
   updateSkinUI();
   buildWalls();
+  initBulletPool();
   updateViewZoom();
 })();
 </script>

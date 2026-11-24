@@ -33,9 +33,9 @@
     box-shadow: inset 0 0 12px #000, 0 2px 6px rgba(0,0,0,0.7);
     z-index: 2;
     box-sizing: border-box; 
+    contain: strict;
   }
 
-  /* ===== ИГРОК (ПОДСВЕТКА УБРАНА) ===== */
   #player {
     position: absolute;
     width: 56px; height: 56px;
@@ -46,9 +46,27 @@
     transform: translate(-150%, -150%);
     margin-left: 28px;
     margin-top: 28px;
+    contain: style paint;
+    will-change: transform;
   }
 
-  /* ===== ФАНИСЫ (ПОДСВЕТКА ОСТАЛАСЬ) ===== */
+  .ally {
+    position: absolute;
+    width: 56px; height: 56px;
+    z-index: 6;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: translate(-150%, -150%);
+    margin-left: 28px;
+    margin-top: 28px;
+    contain: style paint;
+    will-change: transform;
+    transition: opacity 0.3s;
+  }
+  .ally.dead { opacity: 0.2; filter: grayscale(1); }
+
+  /* ===== ФАНИСЫ: ИСПРАВЛЕННЫЙ ХИТБОКС ===== */
   .fanis {
     position: absolute;
     width: 80px; height: 110px;
@@ -60,16 +78,38 @@
     border: 2px solid #ff1744;
     box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
     transition: box-shadow 0.15s, transform 0.1s;
-    transform: translate(-150%, -150%);
-    margin-left: 40px;
-    margin-top: 55px;
+    transform: translate(-50%, -50%);
+    contain: style paint;
+    will-change: transform;
+  }
+  .fanis-type-1 {
+    border-color: #ff1744;
+    box-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+  }
+  .fanis-type-2 {
+    border-color: #b388ff;
+    box-shadow: 0 0 22px rgba(156, 39, 176, 0.6);
+  }
+  .fanis-type-3 {
+    border-color: #69f0ae;
+    box-shadow: 0 0 22px rgba(76, 175, 80, 0.6);
+  }
+  /* Термофанис: форма фаниса, текстура термометра, красная обводка */
+  .fanis-type-4 {
+    border: 3px solid #ff1744 !important;
+    box-shadow: 0 0 25px rgba(255, 23, 68, 0.7) !important;
+    background-size: cover !important;
+    background-position: center !important;
   }
   .fanis.aiming {
     box-shadow: 0 0 30px #ffeb3b, 0 0 50px #ff9800;
-    transform: translate(-150%, -150%) scale(1.05);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  .fanis-type-4.aiming {
+    box-shadow: 0 0 35px #ffeb3b, 0 0 55px #ff9800 !important;
+    transform: translate(-50%, -50%) scale(1.05);
   }
 
-  /* ===== ТЕРМОМЕТР ===== */
   .thermo {
     position: absolute;
     background-size: contain;
@@ -78,13 +118,14 @@
     z-index: 4;
     animation: thermoBob 1.2s ease-in-out infinite alternate;
     filter: drop-shadow(0 0 6px rgba(255, 213, 79, 0.5));
+    contain: style paint;
+    will-change: transform;
   }
   @keyframes thermoBob {
     from { transform: translateY(0) scale(1); }
     to   { transform: translateY(-4px) scale(1.05); }
   }
 
-  /* ===== ПУЛЯ ===== */
   .bullet {
     position: absolute;
     width: 24px; height: 24px;
@@ -94,12 +135,17 @@
     z-index: 4;
     filter: none;
     transform: translate(-50%, -50%);
+    contain: strict;
+    will-change: transform;
   }
-  .bullet.fast {
-    filter: none
+  .bullet.fast { filter: none; }
+  .bullet-thermo {
+    width: 60px !important;
+    height: 120px !important;
+    filter: drop-shadow(0 0 10px rgba(156, 39, 176, 0.8));
+    z-index: 5;
   }
 
-  /* ===== UI ===== */
   #ui {
     position: absolute;
     top: max(8px, env(safe-area-inset-top));
@@ -120,10 +166,7 @@
     font-size: 18px; font-weight: bold; color: #ffd54f;
     text-shadow: 0 0 8px #ff8f00, 0 0 3px #000;
   }
-  #best-score-ui {
-    color: #4fc3f7;
-    font-weight: bold;
-  }
+  #best-score-ui { color: #4fc3f7; font-weight: bold; }
 
   #minimap {
     position: absolute;
@@ -151,7 +194,6 @@
   }
   #minimap canvas { width: 100%; height: 100%; display: block; }
 
-  /* ===== ГЛАВНОЕ МЕНЮ ===== */
   #menu {
     position: absolute; inset: 0;
     background: rgba(10, 10, 15, 0.92);
@@ -201,7 +243,6 @@
     font-weight: bold;
   }
 
-  /* Стили для ползунка */
   .slider-container {
     display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;
   }
@@ -223,8 +264,11 @@
     font-size: 20px; font-weight: bold; color: #ff5252;
     text-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
   }
+  #ally-count-display {
+    font-size: 20px; font-weight: bold; color: #4fc3f7;
+    text-shadow: 0 0 10px rgba(79, 195, 247, 0.4);
+  }
 
-  /* Выбор скинов */
   .skin-selector {
     display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center;
   }
@@ -235,6 +279,7 @@
     width: 36px; height: 36px; border-radius: 50%; font-size: 18px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
+    touch-action: manipulation;
   }
   .skin-btn:hover { background: #4fc3f7; color: #000; }
   .skin-btn:active { transform: scale(0.9); }
@@ -246,6 +291,41 @@
   }
   .skin-name {
     font-size: 16px; font-weight: bold; color: #fff; min-width: 100px; text-align: center;
+  }
+
+  #secret-code-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 213, 79, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffd54f;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #secret-code-input:focus { border-color: #ffd54f; }
+  #secret-code-input::placeholder { color: rgba(255, 213, 79, 0.4); }
+  #secret-code-btn {
+    background: linear-gradient(135deg, #ffd54f, #ff8f00);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: #000;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  #secret-code-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(255, 213, 79, 0.4); }
+  #secret-code-btn:active { transform: scale(0.98); }
+  #secret-code-message {
+    font-size: 13px;
+    min-height: 18px;
+    text-align: center;
+    transition: color 0.2s;
   }
 
   #sound-btn {
@@ -266,7 +346,6 @@
   #start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(79, 195, 247, 0.6); }
   #start-btn:active { transform: translateY(0) scale(0.98); }
 
-  /* ===== СООБЩЕНИЯ ===== */
   #message {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-size: 22px; text-align: center; z-index: 40; display: none;
@@ -283,7 +362,6 @@
   }
   #message button:active { transform: scale(0.95); }
 
-  /* ===== УПРАВЛЕНИЕ ===== */
   #joystick {
     position: absolute; bottom: calc(20px + env(safe-area-inset-bottom)); left: 20px;
     width: 130px; height: 130px; border-radius: 50%;
@@ -320,7 +398,8 @@
     #message { font-size: 18px; padding: 24px; }
     #message button { font-size: 16px; padding: 12px 28px; }
     #player { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
-    .fanis { width: 68px; height: 94px; margin-left: 34px; margin-top: 47px; }
+    .ally { width: 48px; height: 48px; margin-left: 24px; margin-top: 24px; }
+    .fanis { width: 68px; height: 94px; }
     #menu h1 { font-size: 28px; }
     .skin-preview { width: 38px; height: 38px; }
     .skin-name { font-size: 14px; min-width: 80px; }
@@ -354,8 +433,16 @@
     <div class="menu-section">
       <div class="menu-section-title">Количество Фанисов</div>
       <div class="slider-container">
-        <input type="range" id="fanis-count-slider" min="1" max="10" value="3">
-        <span id="fanis-count-display">3 Фаниса</span>
+        <input type="range" id="fanis-count-slider" min="1" max="10" value="4">
+        <span id="fanis-count-display">4 Фаниса</span>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">больше рабовайци</div>
+      <div class="slider-container">
+        <input type="range" id="ally-count-slider" min="0" max="10" value="0">
+        <span id="ally-count-display">0 работы</span>
       </div>
     </div>
 
@@ -398,6 +485,23 @@
         <button class="skin-btn" data-type="bullet" data-dir="1">▶</button>
       </div>
     </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Скин пола</div>
+      <div class="skin-selector">
+        <button class="skin-btn" data-type="floor" data-dir="-1">◀</button>
+        <div class="skin-preview" id="floor-skin-preview"></div>
+        <span id="floor-skin-name" class="skin-name">Стандарт</span>
+        <button class="skin-btn" data-type="floor" data-dir="1">▶</button>
+      </div>
+    </div>
+
+    <div class="menu-section" style="border-color: rgba(255, 213, 79, 0.3);">
+      <div class="menu-section-title" style="color: #ffd54f;">коды вод</div>
+      <input type="text" id="secret-code-input" placeholder="Введи код..." autocomplete="off">
+      <button id="secret-code-btn">Актиделай</button>
+      <div id="secret-code-message"></div>
+    </div>
     
     <button id="sound-btn">🔊 Звук: ВКЛ</button>
     <button id="start-btn">НАЧАТЬ Фаниса</button>
@@ -411,9 +515,6 @@
 
 <script>
 (() => {
-  // ==========================================
-  // ==== НАСТРОЙКИ СКИНОВ ====
-  // ==========================================
   const PLAYER_SKINS = [
     { name: "Вамин", url: "https://images4.imgbox.com/18/76/82TfLIKI_o.png" },
     { name: "Шакалистый", url: "https://thumbs4.imgbox.com/2e/55/slKjD8FV_t.png" },
@@ -429,35 +530,74 @@
     { name: "Фанисла", url: "https://thumbs4.imgbox.com/b9/06/0jWeRdBn_t.jpg" },
     { name: "Гулнар", url: "https://thumbs4.imgbox.com/5a/53/tCvnYTgc_t.png" },
     { name: "Шаканис?", url: "https://thumbs4.imgbox.com/08/58/iJCWzISm_t.jpg" },
-    { name: "68", url: "https://thumbs4.imgbox.com/4f/88/9bXUINvP_t.png" },
+    { name: "68", url: "https://thumbs4.imgbox.com/4f/88/9bXUINvP_t.png", secretCode: "68" },
    { name: "не вамин", url: "https://i.ibb.co/d0S7sJ57/105-20261123010056.png" },
     { name: " Рандомка", url: "https://images4.imgbox.com/1e/f8/SeLtJ0VX_o.png" }
   ];
 
-  // ===== НОВЫЕ МАССИВЫ ДЛЯ ТЕРМОМЕТРА И ПУЛИ =====
   const THERMO_SKINS = [
     { name: "Термометр", url: "https://images4.imgbox.com/de/4c/vfiBWV4R_o.png" },
    { name: "чекушнометр", url: "https://i.ibb.co/HL7q4GjH/99-20261123004048.png" },
-   { name: "резинка", url: "https://i.ibb.co/Wp3YRCZV/101-20261123004702.png" },
+   { name: "резинка", url: "https://i.ibb.co/Wp3YRCZV/101-20261123004702.png", secretCode: "даник" },
    { name: "х", url: "https://i.ibb.co/3yc71XY7/109-20261123011120.png" },
-    { name: "Фанисник", url: "https://i.ibb.co/MD4Kxzyd/97-20261123003728.png" } // <-- ЗАМЕНИТЕ ЭТУ ССЫЛКУ
+    { name: "Фанисник", url: "https://i.ibb.co/MD4Kxzyd/97-20261123003728.png" }
   ];
 
   const BULLET_SKINS = [
     { name: "Стандарт", url: "https://images4.imgbox.com/6c/22/QUZMdjdM_o.png" },
-   { name: "да", url: "https://i.ibb.co/cXT7nPTx/96-20261123002936.png" },
+   { name: "да", url: "https://i.ibb.co/cXT7nPTx/96-20261123002936.png", secretCode: "даник" },
    { name: "сышка", url: "https://i.ibb.co/DDh1npr5/110-20261123011459.png" },
    { name: "патрориш", url: "https://i.ibb.co/3n2WQwf/112-20261123012046.png" },
-    { name: "сладость", url: "https://i.ibb.co/4nWt2C3d/91-20261123000626.png" } // <-- ЗАМЕНИТЕ ЭТУ ССЫЛКУ
+    { name: "сладость", url: "https://i.ibb.co/4nWt2C3d/91-20261123000626.png" }
   ];
+
+  const FLOOR_SKINS = [
+    { name: "Стандарт", url: null, useGradient: true },
+    { name: "Скин 1", url: "" },
+    { name: "Скин 2", url: "" },
+    { name: "Скин 3", url: "" },
+    { name: "Скин 4", url: "" }
+  ];
+
+  function getUnlockedCodes() {
+    try { return JSON.parse(localStorage.getItem('fanisGameUnlockedCodes')) || []; }
+    catch { return []; }
+  }
+  function saveUnlockedCode(code) {
+    const codes = getUnlockedCodes();
+    const lower = code.toLowerCase();
+    if (!codes.includes(lower)) {
+      codes.push(lower);
+      localStorage.setItem('fanisGameUnlockedCodes', JSON.stringify(codes));
+    }
+  }
+  function isCodeUnlocked(secretCode) {
+    return getUnlockedCodes().includes(secretCode.toLowerCase());
+  }
+  function isSkinVisible(skin) {
+    if (!skin.secretCode) return true;
+    return isCodeUnlocked(skin.secretCode);
+  }
+  function getNextVisibleIdx(skinArray, currentIdx, dir) {
+    let idx = currentIdx, attempts = 0;
+    do {
+      idx = (idx + dir + skinArray.length) % skinArray.length;
+      attempts++;
+    } while (!isSkinVisible(skinArray[idx]) && attempts < skinArray.length);
+    return idx;
+  }
+  function getVisibleThermoSkins() {
+    return THERMO_SKINS.filter(s => isSkinVisible(s));
+  }
 
   let currentPlayerSkinIdx = 0;
   let currentFanisSkinIdx = 0;
-  let currentThermoSkinIdx = 0;   // Индекс скина термометра
-  let currentBulletSkinIdx = 0;   // Индекс скина пули
-  let fanisCount = 3;
+  let currentThermoSkinIdx = 0;
+  let currentBulletSkinIdx = 0;
+  let currentFloorSkinIdx = 0;
+  let fanisCount = 4;
+  let allyCount = 0;
 
-  // ===== ЛУЧШИЙ СЧЕТ (LOCALSTORAGE) =====
   let bestScore = parseInt(localStorage.getItem('fanisGameBestScore')) || 0;
   const bestScoreUi = document.getElementById('best-score-ui');
   if (bestScoreUi) bestScoreUi.textContent = bestScore;
@@ -479,12 +619,10 @@
   const soundBtn = document.getElementById('sound-btn');
   const fanisSlider = document.getElementById('fanis-count-slider');
   const fanisCountDisplay = document.getElementById('fanis-count-display');
+  const allySlider = document.getElementById('ally-count-slider');
+  const allyCountDisplay = document.getElementById('ally-count-display');
 
-  // ==========================================
-  // ==== АУДИО СИСТЕМА ====
-  // ==========================================
-  let audioCtx = null;
-  let soundEnabled = true;
+  let audioCtx = null, soundEnabled = true;
   let bgMusicNode = null, bgOsc = null, bgFilter = null;
   const audioElements = {};
   const SOUNDS = {
@@ -578,13 +716,12 @@
     else { stopBgMusic(); }
   });
 
-  // ==========================================
-  // ==== ЛОГИКА ИГРЫ ====
-  // ==========================================
   const W = 2400, H = 1800;
-  const P_SIZE = 56, F_SIZE = 80;
+  const P_SIZE = 56, F_SIZE = 80, F_HEIGHT = 110, ALLY_SIZE = 56;
+  const PLAYER_SPEED = 4.2;
   const THERMO_ON_FIELD = 12;
   const T = 30;
+  const FANIS_TYPE = { CLASSIC: 1, SNIPER: 2, BERSERK: 3, THERMO: 4 };
 
   const WALLS = [];
   function wall(x, y, w, h) { WALLS.push({ x, y, w, h }); }
@@ -611,11 +748,21 @@
 
   let px = 120, py = 120, pvx = 0, pvy = 0;
   let score = 0, running = false, startTime = null, lastTime = 0;
-  let thermos = [], bullets = [], fanises = [];
+  let thermos = [], bullets = [], fanises = [], allies = [];
   let dashCooldown = 0, dashActive = 0, dashDir = { x: 0, y: 0 };
   let camX = 0, camY = 0, rafId = 0;
   const keys = Object.create(null);
   let joyActive = false, joyVX = 0, joyVY = 0;
+  let minimapFrame = 0, viewZoom = 1;
+  
+  function updateViewZoom() {
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    const minDim = Math.min(vw, vh);
+    if (minDim < 500) viewZoom = 0.55;
+    else if (minDim < 650) viewZoom = 0.7;
+    else if (minDim < 850) viewZoom = 0.85;
+    else viewZoom = 1;
+  }
 
   function circleRect(cx, cy, r, rect) {
     const nx = Math.max(rect.x, Math.min(cx, rect.x + rect.w));
@@ -697,8 +844,7 @@
       }
     }
     pop() {
-      const top = this.a[0];
-      const last = this.a.pop();
+      const top = this.a[0], last = this.a.pop();
       if (this.a.length) {
         this.a[0] = last;
         let i = 0;
@@ -789,10 +935,10 @@
       const cx = x + style.w / 2, cy = y + style.h / 2;
       const rr = Math.max(style.w, style.h) / 2 + 4;
       if (hitsWall(cx, cy, rr)) continue;
-      if (Math.hypot(cx - (px + P_SIZE/2), cy - (py + P_SIZE/2)) < 150) continue;
+      if (Math.hypot(cx - px, cy - py) < 150) continue;
       let nearFanis = false;
       for (const f of fanises) {
-        if (Math.hypot(cx - (f.x + F_SIZE/2), cy - (f.y + F_SIZE/2)) < 250) { nearFanis = true; break; }
+        if (Math.hypot(cx - f.x, cy - f.y) < 250) { nearFanis = true; break; }
       }
       if (nearFanis) continue;
       let near = false;
@@ -804,7 +950,6 @@
       el.className = 'thermo';
       el.style.width = style.w + 'px'; el.style.height = style.h + 'px';
       el.style.left = x + 'px'; el.style.top = y + 'px';
-      // === ИСПОЛЬЗУЕМ ВЫБРАННЫЙ СКИН ТЕРМОМЕТРА ===
       el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
       world.appendChild(el);
       thermos.push({ x, y, style, el });
@@ -826,93 +971,222 @@
     onfieldEl.textContent = '0';
   }
 
+  // ===== ИСПРАВЛЕННЫЙ СПАВН ФАНИСОВ: f.x, f.y = ЦЕНТР =====
   function spawnFanises(count) {
     fanises.forEach(f => f.el.remove());
     fanises = [];
     const isRandomMode = (currentFanisSkinIdx === FANIS_SKINS.length - 1);
 
+    let types = [];
+    if (count === 4) {
+      types = [FANIS_TYPE.CLASSIC, FANIS_TYPE.SNIPER, FANIS_TYPE.BERSERK, FANIS_TYPE.THERMO];
+    } else if (count < 4) {
+      for (let i = 0; i < count; i++) types.push(1 + Math.floor(Math.random() * 4));
+    } else {
+      types = [FANIS_TYPE.CLASSIC, FANIS_TYPE.SNIPER, FANIS_TYPE.BERSERK, FANIS_TYPE.THERMO];
+      for (let i = 4; i < count; i++) types.push(1 + Math.floor(Math.random() * 4));
+    }
+    for (let i = types.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [types[i], types[j]] = [types[j], types[i]];
+    }
+
     for (let i = 0; i < count; i++) {
       let sx, sy, attempts = 0;
+      const type = types[i];
       do {
         sx = 100 + Math.random() * (W - 200);
         sy = 100 + Math.random() * (H - 200);
         attempts++;
-      } while (hitsWall(sx, sy, F_SIZE / 2) && attempts < 100);
+      } while ((hitsWall(sx, sy, F_SIZE / 2) || Math.hypot(sx - px, sy - py) < 400) && attempts < 200);
       
       const el = document.createElement('div');
-      el.className = 'fanis';
+      el.className = 'fanis fanis-type-' + type;
+      // Позиционируем по ЦЕНТРУ
       el.style.left = sx + 'px'; 
       el.style.top = sy + 'px';
       
-      let skinUrl;
-      if (isRandomMode) {
-        const randomIdx = Math.floor(Math.random() * (FANIS_SKINS.length - 1));
-        skinUrl = FANIS_SKINS[randomIdx].url;
+      // Термофанис: текстура термометра в форме фаниса
+      if (type === FANIS_TYPE.THERMO) {
+        el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
       } else {
-        skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
+        let skinUrl;
+        if (isRandomMode) {
+          const randomIdx = Math.floor(Math.random() * (FANIS_SKINS.length - 1));
+          skinUrl = FANIS_SKINS[randomIdx].url;
+        } else {
+          skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
+        }
+        el.style.backgroundImage = `url('${skinUrl}')`;
       }
       
-      el.style.backgroundImage = `url('${skinUrl}')`;
       world.appendChild(el);
       
+      let speed, shootRange, cooldownMult, bulletSpeedMult, bulletSize, piercesWalls;
+      switch (type) {
+        case FANIS_TYPE.CLASSIC:
+          speed = 2.7 + Math.random() * 0.2;
+          shootRange = 900; cooldownMult = 1; bulletSpeedMult = 1;
+          bulletSize = 24; piercesWalls = false;
+          break;
+        case FANIS_TYPE.SNIPER:
+          speed = (2.7 + Math.random() * 0.2) * 0.75;
+          shootRange = 900 * 1.5; cooldownMult = 2; bulletSpeedMult = 0.75;
+          bulletSize = 60; piercesWalls = true;
+          break;
+        case FANIS_TYPE.BERSERK:
+          speed = PLAYER_SPEED * 1.02;
+          shootRange = 900 * 0.15; cooldownMult = 1; bulletSpeedMult = 1;
+          bulletSize = 24; piercesWalls = false;
+          break;
+        case FANIS_TYPE.THERMO:
+          speed = (2.7 + Math.random() * 0.2) * 0.5;
+          shootRange = 900; cooldownMult = 1; bulletSpeedMult = 0.45;
+          bulletSize = 24; piercesWalls = false;
+          break;
+      }
+      
+      // f.x, f.y теперь ЦЕНТР фаниса
       fanises.push({
-        x: sx, y: sy, el,
+        x: sx, y: sy, el, type,
         path: [], pathIndex: 0, pathTimer: 0,
         shootCooldown: 0, aimTimer: 0,
-        speed: 2.7 + Math.random() * 0.2
+        speed, shootRange, cooldownMult, bulletSpeedMult, bulletSize, piercesWalls,
+        targetX: px, targetY: py,
+        flankAngle: Math.random() * Math.PI * 2,
+        flankDist: 80 + Math.random() * 150
       });
     }
   }
 
-  // === ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ВСЕХ СКИНОВ ===
+  function spawnAllies(count) {
+    allies.forEach(a => a.el.remove());
+    allies = [];
+    for (let i = 0; i < count; i++) {
+      const angle = (i / Math.max(1, count)) * Math.PI * 2;
+      const dist = 80;
+      let sx = px + Math.cos(angle) * dist;
+      let sy = py + Math.sin(angle) * dist;
+      let attempts = 0;
+      while (hitsWall(sx, sy, ALLY_SIZE / 2) && attempts < 50) {
+        sx = px + Math.cos(angle + Math.random() * 0.5) * dist;
+        sy = py + Math.sin(angle + Math.random() * 0.5) * dist;
+        attempts++;
+      }
+      if (hitsWall(sx, sy, ALLY_SIZE / 2)) { sx = px; sy = py; }
+      
+      const skinIdx = Math.floor(Math.random() * PLAYER_SKINS.length);
+      const el = document.createElement('div');
+      el.className = 'ally';
+      el.style.left = sx + 'px';
+      el.style.top = sy + 'px';
+      el.style.backgroundImage = `url('${PLAYER_SKINS[skinIdx].url}')`;
+      world.appendChild(el);
+      allies.push({ x: sx, y: sy, el, alive: true, wanderAngle: Math.random() * Math.PI * 2, skinIdx });
+    }
+  }
+
+  function updateAllies(dt) {
+    for (const ally of allies) {
+      if (!ally.alive) continue;
+      let mx = 0, my = 0;
+      ally.wanderAngle += (Math.random() - 0.5) * 0.4;
+      mx = Math.cos(ally.wanderAngle);
+      my = Math.sin(ally.wanderAngle);
+      for (const b of bullets) {
+        const dist = Math.hypot(b.x - ally.x, b.y - ally.y);
+        if (dist < 130) {
+          const angle = Math.atan2(ally.y - b.y, ally.x - b.x);
+          mx += Math.cos(angle) * 1.5;
+          my += Math.sin(angle) * 1.5;
+        }
+      }
+      const len = Math.hypot(mx, my);
+      if (len > 1) { mx /= len; my /= len; }
+      const speed = 3.0 * dt;
+      const obj = { x: ally.x, y: ally.y };
+      tryMove(obj, mx * speed, my * speed, ALLY_SIZE / 2);
+      ally.x = obj.x; ally.y = obj.y;
+      ally.el.style.left = ally.x + 'px';
+      ally.el.style.top = ally.y + 'px';
+    }
+  }
+
+  function applyFloorSkin() {
+    const skin = FLOOR_SKINS[currentFloorSkinIdx];
+    if (skin.useGradient) {
+      world.style.backgroundImage = '';
+      world.style.background = 
+        'repeating-linear-gradient(0deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px),' +
+        'repeating-linear-gradient(90deg, #1a1a24 0px, #1a1a24 60px, #161620 60px, #161620 61px)';
+    } else {
+      world.style.background = '';
+      world.style.backgroundImage = `url('${skin.url}')`;
+      world.style.backgroundSize = '60px 60px';
+      world.style.backgroundRepeat = 'repeat';
+    }
+    const preview = document.getElementById('floor-skin-preview');
+    if (preview) {
+      if (skin.useGradient) {
+        preview.style.backgroundImage = '';
+        preview.style.background = 
+          'repeating-linear-gradient(0deg, #1a1a24 0px, #1a1a24 15px, #161620 15px, #161620 16px),' +
+          'repeating-linear-gradient(90deg, #1a1a24 0px, #1a1a24 15px, #161620 15px, #161620 16px)';
+      } else {
+        preview.style.background = '';
+        preview.style.backgroundImage = `url('${skin.url}')`;
+        preview.style.backgroundSize = 'cover';
+      }
+    }
+    const nameEl = document.getElementById('floor-skin-name');
+    if (nameEl) nameEl.textContent = skin.name;
+  }
+
   function updateSkinUI() {
     const pSkin = PLAYER_SKINS[currentPlayerSkinIdx];
     const fSkin = FANIS_SKINS[currentFanisSkinIdx];
     const tSkin = THERMO_SKINS[currentThermoSkinIdx];
     const bSkin = BULLET_SKINS[currentBulletSkinIdx];
-
     document.getElementById('player-skin-preview').style.backgroundImage = `url('${pSkin.url}')`;
     document.getElementById('player-skin-name').textContent = pSkin.name;
-    
     document.getElementById('fanis-skin-preview').style.backgroundImage = `url('${fSkin.url}')`;
     document.getElementById('fanis-skin-name').textContent = fSkin.name;
-    
     document.getElementById('thermo-skin-preview').style.backgroundImage = `url('${tSkin.url}')`;
     document.getElementById('thermo-skin-name').textContent = tSkin.name;
-    
     document.getElementById('bullet-skin-preview').style.backgroundImage = `url('${bSkin.url}')`;
     document.getElementById('bullet-skin-name').textContent = bSkin.name;
-    
     player.style.backgroundImage = `url('${pSkin.url}')`;
+    applyFloorSkin();
   }
 
-  // === УНИВЕРСАЛЬНЫЙ ОБРАБОТЧИК КНОПОК СКИНОВ ===
   document.querySelectorAll('.skin-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       initAudio();
       const type = btn.dataset.type;
       const dir = parseInt(btn.dataset.dir);
-      
-      if (type === 'player') {
-        currentPlayerSkinIdx = (currentPlayerSkinIdx + dir + PLAYER_SKINS.length) % PLAYER_SKINS.length;
-      } else if (type === 'fanis') {
-        currentFanisSkinIdx = (currentFanisSkinIdx + dir + FANIS_SKINS.length) % FANIS_SKINS.length;
-      } else if (type === 'thermo') {
-        currentThermoSkinIdx = (currentThermoSkinIdx + dir + THERMO_SKINS.length) % THERMO_SKINS.length;
-      } else if (type === 'bullet') {
-        currentBulletSkinIdx = (currentBulletSkinIdx + dir + BULLET_SKINS.length) % BULLET_SKINS.length;
+      if (type === 'player') currentPlayerSkinIdx = getNextVisibleIdx(PLAYER_SKINS, currentPlayerSkinIdx, dir);
+      else if (type === 'fanis') currentFanisSkinIdx = getNextVisibleIdx(FANIS_SKINS, currentFanisSkinIdx, dir);
+      else if (type === 'thermo') currentThermoSkinIdx = getNextVisibleIdx(THERMO_SKINS, currentThermoSkinIdx, dir);
+      else if (type === 'bullet') currentBulletSkinIdx = getNextVisibleIdx(BULLET_SKINS, currentBulletSkinIdx, dir);
+      else if (type === 'floor') {
+        currentFloorSkinIdx = (currentFloorSkinIdx + dir + FLOOR_SKINS.length) % FLOOR_SKINS.length;
+        applyFloorSkin();
       }
-      
       updateSkinUI();
       playTone(400, 'sine', 0.1, 0.05, 600, 1000);
     });
   });
 
-  // ===== ЛОГИКА ПОЛЗУНКА КОЛИЧЕСТВА ФАНИСОВ =====
   function getFanisText(count) {
     if (count === 1) return "1 Фанис";
     if (count >= 2 && count <= 4) return `${count} Фаниса`;
     return `${count} Фанисов`;
+  }
+  function getAllyText(count) {
+    if (count === 0) return "0 друзей";
+    if (count === 1) return "1 друг";
+    if (count >= 2 && count <= 4) return `${count} друга`;
+    return `${count} друзей`;
   }
 
   fanisSlider.addEventListener('input', () => {
@@ -920,6 +1194,39 @@
     fanisCountDisplay.textContent = getFanisText(fanisCount);
     initAudio();
     playTone(400, 'sine', 0.1, 0.05, 600, 1000);
+  });
+  allySlider.addEventListener('input', () => {
+    allyCount = parseInt(allySlider.value);
+    allyCountDisplay.textContent = getAllyText(allyCount);
+    initAudio();
+    playTone(500, 'sine', 0.1, 0.05, 700, 1000);
+  });
+
+  const secretCodeBtn = document.getElementById('secret-code-btn');
+  const secretCodeInput = document.getElementById('secret-code-input');
+  const secretCodeMsg = document.getElementById('secret-code-message');
+  const VALID_CODES = ['68', 'даник'];
+
+  secretCodeBtn.addEventListener('click', () => {
+    initAudio();
+    const code = secretCodeInput.value.trim().toLowerCase();
+    if (!code) return;
+    if (VALID_CODES.includes(code)) {
+      saveUnlockedCode(code);
+      secretCodeMsg.textContent = '✓ Код активирован! Скины разблокированы';
+      secretCodeMsg.style.color = '#69f0ae';
+      secretCodeInput.value = '';
+      playTone(800, 'sine', 0.3, 0.1, 1200, 2000);
+      updateSkinUI();
+    } else {
+      secretCodeMsg.textContent = '✗ Неверный код';
+      secretCodeMsg.style.color = '#ff5252';
+      playTone(200, 'sawtooth', 0.2, 0.08, 100, 500);
+    }
+  });
+  secretCodeInput.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter') secretCodeBtn.click();
   });
 
   function resetGame() {
@@ -939,54 +1246,63 @@
     buildWalls();
     walkCache.clear();
     spawnFanises(fanisCount);
+    spawnAllies(allyCount);
     player.style.left = (px + P_SIZE/2) + 'px';
     player.style.top = (py + P_SIZE/2) + 'px';
     player.style.opacity = '1';
     fillThermos();
-    camX = px + P_SIZE/2 - viewport.clientWidth / 2;
-    camY = py + P_SIZE/2 - viewport.clientHeight / 2;
+    updateViewZoom();
+    const vw = viewport.clientWidth / viewZoom;
+    const vh = viewport.clientHeight / viewZoom;
+    camX = px - vw / 2;
+    camY = py - vh / 2;
     applyCamera();
     lastTime = performance.now();
+    minimapFrame = 0;
     if (rafId) cancelAnimationFrame(rafId);
     rafId = requestAnimationFrame(loop);
   }
 
   function applyCamera() {
-    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    const vw = viewport.clientWidth / viewZoom;
+    const vh = viewport.clientHeight / viewZoom;
     camX = Math.max(0, Math.min(W - vw, camX));
     camY = Math.max(0, Math.min(H - vh, camY));
-    world.style.transform = `translate(${-Math.round(camX)}px, ${-Math.round(camY)}px)`;
+    world.style.transform = `scale(${viewZoom}) translate3d(${-Math.round(camX)}px, ${-Math.round(camY)}px, 0)`;
   }
   function updateCamera() {
-    const vw = viewport.clientWidth, vh = viewport.clientHeight;
-    camX += ((px + P_SIZE / 2 - vw / 2) - camX) * 0.15;
-    camY += ((py + P_SIZE / 2 - vh / 2) - camY) * 0.15;
+    const vw = viewport.clientWidth / viewZoom;
+    const vh = viewport.clientHeight / viewZoom;
+    camX += ((px - vw / 2) - camX) * 0.15;
+    camY += ((py - vh / 2) - camY) * 0.15;
     applyCamera();
   }
 
+  // ===== ИСПРАВЛЕННЫЕ ХИТБОКСЫ: f.x, f.y = центр =====
   function moveFanis(f, dt) {
-    const fcx = f.x + F_SIZE/2, fcy = f.y + F_SIZE/2;
-    const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
-    const dist = Math.hypot(pcx - fcx, pcy - fcy);
+    const fcx = f.x, fcy = f.y; // уже центр
+    const targetX = px, targetY = py; // центр игрока
+    const dist = Math.hypot(targetX - fcx, targetY - fcy);
+    f.targetX = targetX; f.targetY = targetY;
     
     f.pathTimer -= dt;
-    const recalcThreshold = dashActive > 0 ? 8 : (dist < 300 ? 15 : 25);
+    const recalcThreshold = dashActive > 0 ? 5 : (dist < 300 ? 10 : 18);
     
     if (f.pathTimer <= 0 || f.path.length === 0 || f.pathIndex >= f.path.length) {
-      let tx = pcx, ty = pcy;
-      const lead = dashActive > 0 ? 18 : 8;
-      tx = pcx + pvx * lead;
-      ty = pcy + pvy * lead;
-      
-      if (dist < 250) {
-        const angle = Math.atan2(fcy - pcy, fcx - pcx);
+      let tx = targetX, ty = targetY;
+      if (f.type === FANIS_TYPE.CLASSIC && dist > 200) {
+        const angleToTarget = Math.atan2(targetY - fcy, targetX - fcx);
+        tx = targetX + Math.cos(angleToTarget + f.flankAngle) * f.flankDist;
+        ty = targetY + Math.sin(angleToTarget + f.flankAngle) * f.flankDist;
+      }
+      if (dist < 250 && (f.type === FANIS_TYPE.CLASSIC || f.type === FANIS_TYPE.SNIPER)) {
+        const angle = Math.atan2(fcy - targetY, fcx - targetX);
         tx = fcx + Math.cos(angle) * 150;
         ty = fcy + Math.sin(angle) * 150;
       }
-      
       f.path = findPath(fcx, fcy, tx, ty);
       f.pathIndex = 0;
-      f.pathTimer = recalcThreshold + Math.random() * 10;
+      f.pathTimer = recalcThreshold + Math.random() * 8;
     }
 
     let remaining = f.speed * dt;
@@ -995,43 +1311,68 @@
       const dx = target.x - fcx, dy = target.y - fcy;
       const d = Math.hypot(dx, dy);
       if (d < 3) { f.pathIndex++; continue; }
-      
       const step = Math.min(remaining, d);
       const obj = { x: f.x, y: f.y };
       const bx = f.x, by = f.y;
       tryMove(obj, (dx / d) * step, (dy / d) * step, F_SIZE / 2);
       f.x = obj.x; f.y = obj.y;
-      
       const moved = Math.hypot(f.x - bx, f.y - by);
       remaining -= moved;
       if (moved < step * 0.3) f.pathIndex++;
       if (moved < 0.1) break;
     }
     
-    f.el.style.left = (f.x + F_SIZE/2) + 'px';
-    f.el.style.top = (f.y + F_SIZE/2) + 'px';
+    f.el.style.left = f.x + 'px';
+    f.el.style.top = f.y + 'px';
 
-    if (dist < (P_SIZE + F_SIZE) / 2 - 8) {
+    // Касание игрока
+    if (Math.hypot(px - fcx, py - fcy) < (P_SIZE + F_SIZE) / 2 - 8) {
       gameOver('КАСАНИЕ');
+    }
+    // Касание союзников
+    for (const ally of allies) {
+      if (!ally.alive) continue;
+      if (Math.hypot(ally.x - fcx, ally.y - fcy) < (ALLY_SIZE + F_SIZE) / 2 - 8) {
+        ally.alive = false;
+        ally.el.classList.add('dead');
+        playTone(300, 'sawtooth', 0.3, 0.1, 100, 500);
+      }
     }
   }
 
   function fanisShoot(f) {
-    const fcx = f.x + F_SIZE/2, fcy = f.y + F_SIZE/2;
-    const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
-    const dist = Math.hypot(pcx - fcx, pcy - fcy);
+    const fcx = f.x, fcy = f.y;
+    const dist = Math.hypot(f.targetX - fcx, f.targetY - fcy);
     if (dist < 1) return false;
+    const bulletSpeed = 6.5 * f.bulletSpeedMult;
 
-    const bulletSpeed = 6.5;
+    if (f.type === FANIS_TYPE.THERMO) {
+      for (let i = 0; i < 16; i++) {
+        const angle = (i / 16) * Math.PI * 2;
+        const vx = Math.cos(angle) * bulletSpeed;
+        const vy = Math.sin(angle) * bulletSpeed;
+        const el = document.createElement('div');
+        el.className = 'bullet';
+        el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
+        el.style.left = fcx + 'px'; el.style.top = fcy + 'px';
+        world.appendChild(el);
+        bullets.push({ x: fcx, y: fcy, vx, vy, el, piercesWalls: false });
+      }
+      playSound('shoot', 0.6);
+      return true;
+    }
+
     const travelTime = dist / bulletSpeed;
-    const leadFactor = dashActive > 0 ? 1.2 : 0.85;
-    const leadX = pcx + pvx * travelTime * leadFactor;
-    const leadY = pcy + pvy * travelTime * leadFactor;
+    const leadFactor = dashActive > 0 ? 1.5 : 1.2;
+    let leadX = f.targetX + pvx * travelTime * leadFactor;
+    let leadY = f.targetY + pvy * travelTime * leadFactor;
     let tx = leadX, ty = leadY;
 
-    if (!hasLineOfSight(fcx, fcy, tx, ty)) {
-      if (hasLineOfSight(fcx, fcy, pcx, pcy)) { tx = pcx; ty = pcy; }
-      else return false;
+    if (!f.piercesWalls) {
+      if (!hasLineOfSight(fcx, fcy, tx, ty)) {
+        if (hasLineOfSight(fcx, fcy, f.targetX, f.targetY)) { tx = f.targetX; ty = f.targetY; }
+        else return false;
+      }
     }
 
     const dx = tx - fcx, dy = ty - fcy;
@@ -1039,8 +1380,11 @@
     const nx = dx / d, ny = dy / d;
 
     let count = 1, spread = 0;
-    if (dist < 350 || dashActive > 0) { count = 3; spread = 0.18; }
-    else if (dist < 550) { count = 2; spread = 0.1; }
+    if (f.type === FANIS_TYPE.SNIPER) count = 1;
+    else {
+      if (dist < 350 || dashActive > 0) { count = 3; spread = 0.18; }
+      else if (dist < 550) { count = 2; spread = 0.1; }
+    }
 
     for (let i = 0; i < count; i++) {
       const offset = (i - (count - 1) / 2) * spread;
@@ -1048,14 +1392,19 @@
       const vx = (nx * cos - ny * sin) * bulletSpeed;
       const vy = (nx * sin + ny * cos) * bulletSpeed;
       if (hitsWall(fcx, fcy, 12)) continue;
-      
       const el = document.createElement('div');
-      el.className = 'bullet' + (count > 1 ? ' fast' : '');
+      if (f.type === FANIS_TYPE.SNIPER) {
+        const availableSkins = getVisibleThermoSkins();
+        const randomIdx = Math.floor(Math.random() * availableSkins.length);
+        el.className = 'bullet bullet-thermo';
+        el.style.backgroundImage = `url('${availableSkins[randomIdx].url}')`;
+      } else {
+        el.className = 'bullet' + (count > 1 ? ' fast' : '');
+        el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
+      }
       el.style.left = fcx + 'px'; el.style.top = fcy + 'px';
-      // === ИСПОЛЬЗУЕМ ВЫБРАННЫЙ СКИН ПУЛИ ===
-      el.style.backgroundImage = `url('${BULLET_SKINS[currentBulletSkinIdx].url}')`;
       world.appendChild(el);
-      bullets.push({ x: fcx, y: fcy, vx, vy, el });
+      bullets.push({ x: fcx, y: fcy, vx, vy, el, piercesWalls: f.piercesWalls });
     }
     playSound('shoot', 0.6); 
     return true;
@@ -1071,18 +1420,31 @@
       for (let s = 0; s < substeps && !removed; s++) {
         const nx = b.x + dx / substeps, ny = b.y + dy / substeps;
         let hit = false;
-        for (const w of WALLS) if (circleRect(nx, ny, 12, w)) { hit = true; break; }
+        if (!b.piercesWalls) {
+          for (const w of WALLS) if (circleRect(nx, ny, 12, w)) { hit = true; break; }
+        }
         if (hit || nx < -20 || nx > W + 20 || ny < -20 || ny > H + 20) {
           b.el.remove(); bullets.splice(i, 1); removed = true; 
           if (hit) playTone(80, 'triangle', 0.1, 0.05, null, 200); 
           break;
         }
         b.x = nx; b.y = ny;
-        if (Math.hypot(px + P_SIZE/2 - b.x, py + P_SIZE/2 - b.y) < P_SIZE/2 + 12) {
+        if (Math.hypot(px - b.x, py - b.y) < P_SIZE/2 + 12) {
           b.el.remove(); bullets.splice(i, 1); removed = true;
           gameOver('ПУЛЯ');
           return;
         }
+        for (const ally of allies) {
+          if (!ally.alive) continue;
+          if (Math.hypot(ally.x - b.x, ally.y - b.y) < ALLY_SIZE/2 + 12) {
+            ally.alive = false;
+            ally.el.classList.add('dead');
+            b.el.remove(); bullets.splice(i, 1); removed = true;
+            playTone(300, 'sawtooth', 0.3, 0.1, 100, 500);
+            break;
+          }
+        }
+        if (removed) break;
       }
       if (!removed) { b.el.style.left = b.x + 'px'; b.el.style.top = b.y + 'px'; }
     }
@@ -1108,7 +1470,7 @@
     if (keys['ArrowDown'] || keys['KeyS'] || keys['s'] || keys['S'] || keys['ы'] || keys['Ы']) my += 1;
     if (joyActive) { mx = joyVX; my = joyVY; }
 
-    let speed = 4.2 * dt;
+    let speed = PLAYER_SPEED * dt;
     if (dashActive > 0) { speed *= 2.8; mx = dashDir.x; my = dashDir.y; }
     else { const len = Math.hypot(mx, my); if (len > 1) { mx /= len; my /= len; } }
 
@@ -1120,7 +1482,6 @@
     if (Math.hypot(px - oldPx, py - oldPy) > 1 && Math.random() < 0.08) {
       playTone(80, 'triangle', 0.08, 0.02, null, 150);
     }
-
     if (dt > 0.01) {
       pvx = pvx * 0.6 + ((px - oldPx) / dt) * 0.4;
       pvy = pvy * 0.6 + ((py - oldPy) / dt) * 0.4;
@@ -1130,6 +1491,8 @@
     player.style.top = (py + P_SIZE/2) + 'px';
     player.style.opacity = dashActive > 0 ? '0.55' : '1';
 
+    updateAllies(dt);
+
     for (const f of fanises) {
       moveFanis(f, dt);
       if (f.shootCooldown > 0) f.shootCooldown -= dt;
@@ -1137,32 +1500,42 @@
         f.aimTimer -= dt;
         if (f.aimTimer <= 0) f.el.classList.remove('aiming');
       }
-
       if (f.shootCooldown <= 0) {
-        const fcx = f.x + F_SIZE/2, fcy = f.y + F_SIZE/2;
-        const pcx = px + P_SIZE/2, pcy = py + P_SIZE/2;
-        const dist = Math.hypot(pcx - fcx, pcy - fcy);
-        if (dist < 900 && hasLineOfSight(fcx, fcy, pcx, pcy)) {
-          f.el.classList.add('aiming');
-          f.aimTimer = 8;
-          const shot = fanisShoot(f);
-          const cooldownMod = dashActive > 0 ? 0.6 : 1;
-          if (shot) f.shootCooldown = (dist < 300 ? 30 : dist < 550 ? 42 : 55) * cooldownMod;
-          else f.shootCooldown = 20;
-        } else f.shootCooldown = 15;
+        const fcx = f.x, fcy = f.y;
+        const dist = Math.hypot(f.targetX - fcx, f.targetY - fcy);
+        if (f.type === FANIS_TYPE.THERMO) {
+          if (dist < f.shootRange) {
+            fanisShoot(f);
+            f.shootCooldown = 90 * f.cooldownMult;
+          } else f.shootCooldown = 15;
+        } else {
+          if (dist < f.shootRange && (f.piercesWalls || hasLineOfSight(fcx, fcy, f.targetX, f.targetY))) {
+            f.el.classList.add('aiming');
+            f.aimTimer = 8;
+            const shot = fanisShoot(f);
+            const cooldownMod = dashActive > 0 ? 0.6 : 1;
+            if (shot) {
+              let baseCd;
+              if (f.type === FANIS_TYPE.SNIPER) baseCd = (dist < 300 ? 50 : dist < 550 ? 70 : 90);
+              else baseCd = (dist < 300 ? 22 : dist < 550 ? 32 : 42);
+              f.shootCooldown = baseCd * cooldownMod * f.cooldownMult;
+            } else f.shootCooldown = 15;
+          } else f.shootCooldown = 12;
+        }
       }
     }
 
     updateBullets(dt);
+    const scoreMultiplier = fanisCount / 4;
 
     for (let i = thermos.length - 1; i >= 0; i--) {
       const t = thermos[i];
       const tcx = t.x + t.style.w / 2, tcy = t.y + t.style.h / 2;
       const r = Math.max(t.style.w, t.style.h) / 2 + P_SIZE / 2 - 4;
-      if (Math.hypot(px + P_SIZE/2 - tcx, py + P_SIZE/2 - tcy) < r) {
+      if (Math.hypot(px - tcx, py - tcy) < r) {
         t.el.remove();
         thermos.splice(i, 1);
-        score += t.style.value;
+        score += Math.round(t.style.value * scoreMultiplier);
         scoreEl.textContent = score;
         playTone(1200, 'sine', 0.2, 0.08, 1800, 3000);
         spawnOneThermo();
@@ -1171,7 +1544,7 @@
     }
 
     updateCamera();
-    drawMinimap();
+    if (++minimapFrame % 3 === 0) drawMinimap();
     rafId = requestAnimationFrame(loop);
   }
 
@@ -1182,39 +1555,59 @@
     mmCtx.fillRect(0, 0, mmCanvas.width, mmCanvas.height);
     mmCtx.fillStyle = '#555';
     for (const w of WALLS) mmCtx.fillRect(w.x * s, w.y * s, Math.max(1, w.w * s), Math.max(1, w.h * s));
-    
     mmCtx.fillStyle = '#ffd54f'; 
     for (const t of thermos) {
       mmCtx.beginPath();
       mmCtx.arc((t.x + t.style.w/2) * s, (t.y + t.style.h/2) * s, 2.5, 0, 7);
       mmCtx.fill();
     }
-    
-    mmCtx.fillStyle = '#ff5252';
-    for (const f of fanises) {
+    mmCtx.fillStyle = '#4fc3f7';
+    for (const ally of allies) {
+      if (!ally.alive) continue;
       mmCtx.beginPath();
-      mmCtx.arc((f.x + F_SIZE/2) * s, (f.y + F_SIZE/2) * s, 4, 0, 7);
+      mmCtx.arc(ally.x * s, ally.y * s, 3, 0, 7);
       mmCtx.fill();
     }
-    
-    mmCtx.fillStyle = '#4fc3f7';
+    for (const f of fanises) {
+      switch (f.type) {
+        case FANIS_TYPE.CLASSIC: mmCtx.fillStyle = '#ff5252'; break;
+        case FANIS_TYPE.SNIPER:  mmCtx.fillStyle = '#b388ff'; break;
+        case FANIS_TYPE.BERSERK: mmCtx.fillStyle = '#69f0ae'; break;
+        case FANIS_TYPE.THERMO:  mmCtx.fillStyle = '#ff1744'; break;
+        default: mmCtx.fillStyle = '#ff5252';
+      }
+      mmCtx.beginPath();
+      mmCtx.arc(f.x * s, f.y * s, 4, 0, 7);
+      mmCtx.fill();
+    }
+    mmCtx.fillStyle = '#ffffff';
     mmCtx.beginPath();
-    mmCtx.arc((px + P_SIZE/2) * s, (py + P_SIZE/2) * s, 3.5, 0, 7);
+    mmCtx.arc(px * s, py * s, 3.5, 0, 7);
     mmCtx.fill();
   }
 
   function gameOver(reason) {
     if (!running) return;
+    const aliveAlly = allies.find(a => a.alive);
+    if (aliveAlly) {
+      aliveAlly.alive = false;
+      aliveAlly.el.remove();
+      px = aliveAlly.x; py = aliveAlly.y;
+      pvx = 0; pvy = 0;
+      player.style.backgroundImage = `url('${PLAYER_SKINS[aliveAlly.skinIdx].url}')`;
+      player.style.left = (px + P_SIZE/2) + 'px';
+      player.style.top = (py + P_SIZE/2) + 'px';
+      playTone(600, 'sine', 0.3, 0.1, 900, 2000);
+      return;
+    }
     running = false;
     stopBgMusic();
     playTone(100, 'sawtooth', 1.0, 0.15, 30, 200);
-    
     if (score > bestScore) {
       bestScore = score;
       localStorage.setItem('fanisGameBestScore', bestScore);
       if (bestScoreUi) bestScoreUi.textContent = bestScore;
     }
-
     messageEl.style.display = 'block';
     const time = timerEl.textContent;
     const reasonText = reason === 'ПУЛЯ' ? 'Тебя фани бах!' : 'Фанис тут бах!';
@@ -1233,15 +1626,11 @@
   window.addEventListener('keydown', e => {
     keys[e.code || e.key] = true;
     if (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar') {
-      if (running && dashCooldown <= 0) {
-        doDash();
-        playTone(200, 'triangle', 0.2, 0.06, 500, 800);
-      }
+      if (running && dashCooldown <= 0) { doDash(); playTone(200, 'triangle', 0.2, 0.06, 500, 800); }
       e.preventDefault(); return;
     }
     if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
   }, { passive: false });
-  
   window.addEventListener('keyup', e => { delete keys[e.code || e.key]; });
   window.addEventListener('blur', () => { for (const k in keys) delete keys[k]; });
   document.addEventListener('visibilitychange', () => { if (document.hidden) for (const k in keys) delete keys[k]; });
@@ -1254,7 +1643,6 @@
     if (keys['ArrowDown']  || keys['KeyS'] || keys['s'] || keys['S'] || keys['ы'] || keys['Ы']) my += 1;
     return { mx, my };
   }
-  
   function doDash() {
     let { mx, my } = readDir();
     if (joyActive) { mx = joyVX; my = joyVY; }
@@ -1279,12 +1667,10 @@
     const t = e.changedTouches[0];
     joyId = t.identifier; joyActive = true; updateJoy(t);
   }, { passive: false });
-  
   joystick.addEventListener('touchmove', e => {
     e.preventDefault();
     for (const t of e.changedTouches) if (t.identifier === joyId) { updateJoy(t); break; }
   }, { passive: false });
-  
   const endJoy = e => {
     for (const t of e.changedTouches) if (t.identifier === joyId) {
       joyId = null; joyActive = false; joyVX = 0; joyVY = 0; stick.style.transform = '';
@@ -1293,7 +1679,6 @@
   };
   joystick.addEventListener('touchend', endJoy);
   joystick.addEventListener('touchcancel', endJoy);
-  
   joystick.addEventListener('mousedown', e => {
     if (!document.body.classList.contains('touch')) return;
     e.preventDefault();
@@ -1306,7 +1691,6 @@
     };
     window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
   });
-  
   function updateJoy(t) {
     const rect = joystick.getBoundingClientRect();
     const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
@@ -1317,19 +1701,15 @@
     stick.style.transform = `translate(${dx}px, ${dy}px)`;
     joyVX = dx / max; joyVY = dy / max;
   }
-  
   function onDash(e) { 
     e.preventDefault(); 
-    if (running && dashCooldown <= 0) {
-      doDash();
-      playTone(200, 'triangle', 0.2, 0.06, 500, 800);
-    }
+    if (running && dashCooldown <= 0) { doDash(); playTone(200, 'triangle', 0.2, 0.06, 500, 800); }
   }
   dashBtn.addEventListener('touchstart', onDash, { passive: false });
   dashBtn.addEventListener('click', onDash);
 
-  window.addEventListener('resize', applyCamera);
-  window.addEventListener('orientationchange', () => setTimeout(applyCamera, 100));
+  window.addEventListener('resize', () => { updateViewZoom(); applyCamera(); });
+  window.addEventListener('orientationchange', () => setTimeout(() => { updateViewZoom(); applyCamera(); }, 100));
   document.addEventListener('gesturestart', e => e.preventDefault());
   document.addEventListener('dblclick', e => e.preventDefault());
 
@@ -1338,11 +1718,13 @@
     resetGame();
   });
 
-  // Инициализация
   fanisCount = parseInt(fanisSlider.value);
   fanisCountDisplay.textContent = getFanisText(fanisCount);
+  allyCount = parseInt(allySlider.value);
+  allyCountDisplay.textContent = getAllyText(allyCount);
   updateSkinUI();
   buildWalls();
+  updateViewZoom();
 })();
 </script>
 </body>

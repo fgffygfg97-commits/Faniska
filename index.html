@@ -232,7 +232,6 @@
   }
   #minimap canvas { width: 100%; height: 100%; display: block; }
 
-  /* ========== ГЛАВНОЕ МЕНЮ ========== */
   #menu {
     position: absolute; inset: 0;
     background: #0e0e10;
@@ -308,7 +307,6 @@
     background: #2c2c2e;
   }
 
-  /* Скроллируемая область контента вкладок */
   .menu-scroll {
     flex: 1;
     min-height: 0;
@@ -493,7 +491,6 @@
   #start-btn:hover { background: #0071e3; }
   #start-btn:active { transform: scale(0.985); background: #0060c0; }
 
-  /* ========== GAME OVER / MESSAGE ========== */
   #message {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-size: 17px; text-align: center; z-index: 40; display: none;
@@ -553,7 +550,6 @@
   body.touch #joystick { display: block; }
   body.touch #dashBtn { display: flex; }
 
-  /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
   @media (max-width: 500px), (max-height: 700px) {
     .menu-content { gap: 10px; padding-left: 12px; padding-right: 12px; }
     #menu h1 { font-size: 24px; }
@@ -641,7 +637,6 @@
       </div>
 
       <div class="menu-scroll">
-        <!-- ВКЛАДКА: ИГРА -->
         <div class="menu-tab-content active" data-tab-content="game">
           <div class="menu-section">
             <div class="menu-section-title">Количество Фанисов</div>
@@ -662,7 +657,6 @@
           <button id="sound-btn">🔊 Звук: ВКЛ</button>
         </div>
 
-        <!-- ВКЛАДКА: СКИНЫ -->
         <div class="menu-tab-content" data-tab-content="skins">
           <div class="menu-section">
             <div class="menu-section-title">Скин увамина</div>
@@ -742,7 +736,7 @@
    { name: "двойной привет", url: "https://i.ibb.co/WvPt91RG/102-20261123005231.png" },
    { name: "Даня в здании хз", url: "https://i.ibb.co/HDYc30hG/104-20261123005823.png" },
    { name: "некий чемпион", url: "https://i.ibb.co/ksXbvsKN/107-20261123010627.png" },
-    { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" }
+    { name: "Дан", url: "https://thumbs4.imgbox.com/c0/9d/xwRRRhQ4_t.jpg" } 
   ];
 
   const FANIS_SKINS = [
@@ -806,13 +800,12 @@
     } while (!isSkinVisible(skinArray[idx]) && attempts < skinArray.length);
     return idx;
   }
-  function getVisiblePlayerSkins() {
-  return PLAYER_SKINS.filter(s => isSkinVisible(s));
-}
-function getVisibleFanisSkins() {
-  // Исключаем последний скин "Рандомка" — он только как режим выбора
-  return FANIS_SKINS.filter((s, i) => i < FANIS_SKINS.length - 1 && isSkinVisible(s));
-  }
+  
+  function getVisiblePlayerSkins() { return PLAYER_SKINS.filter(s => isSkinVisible(s)); }
+  function getVisibleFanisSkins() { return FANIS_SKINS.filter((s, i) => i < FANIS_SKINS.length - 1 && isSkinVisible(s)); }
+  function getVisibleThermoSkins() { return THERMO_SKINS.filter(s => isSkinVisible(s)); }
+  function getVisibleBulletSkins() { return BULLET_SKINS.filter(s => isSkinVisible(s)); }
+  function getVisibleFloorSkins() { return FLOOR_SKINS.filter(s => isSkinVisible(s)); }
 
   let currentPlayerSkinIdx = 0;
   let currentFanisSkinIdx = 0;
@@ -941,7 +934,6 @@ function getVisibleFanisSkins() {
     else { stopBgMusic(); }
   });
 
-  // ===== ТАБЫ МЕНЮ =====
   document.querySelectorAll('.menu-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const target = tab.dataset.tab;
@@ -1312,19 +1304,19 @@ function getVisibleFanisSkins() {
       el.style.top = sy + 'px';
 
       if (type === FANIS_TYPE.THERMO) {
-  el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
-} else {
-  let skinUrl;
-  if (isRandomMode) {
-    const visibleSkins = getVisibleFanisSkins();
-    const randomSkin = visibleSkins[Math.floor(Math.random() * visibleSkins.length)];
-    skinUrl = randomSkin.url;
-  } else {
-    skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
-  }
-  el.style.backgroundImage = `url('${skinUrl}')`;
-}
-      
+        el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
+      } else {
+        let skinUrl;
+        if (isRandomMode) {
+          const visibleSkins = getVisibleFanisSkins();
+          const randomSkin = visibleSkins[Math.floor(Math.random() * visibleSkins.length)];
+          skinUrl = randomSkin.url;
+        } else {
+          skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
+        }
+        el.style.backgroundImage = `url('${skinUrl}')`;
+      }
+
       world.appendChild(el);
 
       let speed, shootRange, cooldownMult, bulletSpeedMult, bulletSize, piercesWalls;
@@ -1380,13 +1372,13 @@ function getVisibleFanisSkins() {
       if (hitsWall(sx, sy, ALLY_SIZE / 2)) { sx = px; sy = py; }
 
       const visibleSkins = getVisiblePlayerSkins();
-const chosenSkin = visibleSkins[Math.floor(Math.random() * visibleSkins.length)];
-const skinIdx = PLAYER_SKINS.indexOf(chosenSkin);
-const el = document.createElement('div');
-el.className = 'ally';
-el.style.left = sx + 'px';
-el.style.top = sy + 'px';
-el.style.backgroundImage = `url('${chosenSkin.url}')`;
+      const chosenSkin = visibleSkins[Math.floor(Math.random() * visibleSkins.length)];
+      const skinIdx = PLAYER_SKINS.indexOf(chosenSkin);
+      const el = document.createElement('div');
+      el.className = 'ally';
+      el.style.left = sx + 'px';
+      el.style.top = sy + 'px';
+      el.style.backgroundImage = `url('${chosenSkin.url}')`;
       world.appendChild(el);
       allies.push({ x: sx, y: sy, el, alive: true, wanderAngle: Math.random() * Math.PI * 2, skinIdx });
     }
@@ -1453,10 +1445,33 @@ el.style.backgroundImage = `url('${chosenSkin.url}')`;
   }
 
   function updateSkinUI() {
+    if (!isSkinVisible(PLAYER_SKINS[currentPlayerSkinIdx])) {
+      const visible = getVisiblePlayerSkins();
+      currentPlayerSkinIdx = PLAYER_SKINS.indexOf(visible[0]);
+    }
+    if (!isSkinVisible(FANIS_SKINS[currentFanisSkinIdx])) {
+      const visible = getVisibleFanisSkins();
+      currentFanisSkinIdx = FANIS_SKINS.indexOf(visible[0]);
+    }
+    if (!isSkinVisible(THERMO_SKINS[currentThermoSkinIdx])) {
+      const visible = getVisibleThermoSkins();
+      currentThermoSkinIdx = THERMO_SKINS.indexOf(visible[0]);
+    }
+    if (!isSkinVisible(BULLET_SKINS[currentBulletSkinIdx])) {
+      const visible = getVisibleBulletSkins();
+      currentBulletSkinIdx = BULLET_SKINS.indexOf(visible[0]);
+    }
+    if (!isSkinVisible(FLOOR_SKINS[currentFloorSkinIdx])) {
+      const visible = getVisibleFloorSkins();
+      currentFloorSkinIdx = FLOOR_SKINS.indexOf(visible[0]);
+    }
+
     const pSkin = PLAYER_SKINS[currentPlayerSkinIdx];
     const fSkin = FANIS_SKINS[currentFanisSkinIdx];
     const tSkin = THERMO_SKINS[currentThermoSkinIdx];
     const bSkin = BULLET_SKINS[currentBulletSkinIdx];
+    const flSkin = FLOOR_SKINS[currentFloorSkinIdx];
+
     document.getElementById('player-skin-preview').style.backgroundImage = `url('${pSkin.url}')`;
     document.getElementById('player-skin-name').textContent = pSkin.name;
     document.getElementById('fanis-skin-preview').style.backgroundImage = `url('${fSkin.url}')`;
@@ -1465,6 +1480,18 @@ el.style.backgroundImage = `url('${chosenSkin.url}')`;
     document.getElementById('thermo-skin-name').textContent = tSkin.name;
     document.getElementById('bullet-skin-preview').style.backgroundImage = `url('${bSkin.url}')`;
     document.getElementById('bullet-skin-name').textContent = bSkin.name;
+    
+    const floorPreview = document.getElementById('floor-skin-preview');
+    if (flSkin.useGradient) {
+      floorPreview.style.backgroundImage = '';
+      floorPreview.style.background = 'repeating-linear-gradient(0deg, rgba(28,28,30,0.5) 0px, rgba(28,28,30,0.5) 15px, rgba(20,20,22,0.5) 15px, rgba(20,20,22,0.5) 16px), repeating-linear-gradient(90deg, rgba(28,28,30,0.5) 0px, rgba(28,28,30,0.5) 15px, rgba(20,20,22,0.5) 15px, rgba(20,20,22,0.5) 16px)';
+    } else {
+      floorPreview.style.background = '';
+      floorPreview.style.backgroundImage = `url('${flSkin.url}')`;
+      floorPreview.style.backgroundSize = 'cover';
+    }
+    document.getElementById('floor-skin-name').textContent = flSkin.name;
+
     player.style.backgroundImage = `url('${pSkin.url}')`;
     applyFloorSkin();
   }
@@ -1479,7 +1506,7 @@ el.style.backgroundImage = `url('${chosenSkin.url}')`;
       else if (type === 'thermo') currentThermoSkinIdx = getNextVisibleIdx(THERMO_SKINS, currentThermoSkinIdx, dir);
       else if (type === 'bullet') currentBulletSkinIdx = getNextVisibleIdx(BULLET_SKINS, currentBulletSkinIdx, dir);
       else if (type === 'floor') {
-        currentFloorSkinIdx = (currentFloorSkinIdx + dir + FLOOR_SKINS.length) % FLOOR_SKINS.length;
+        currentFloorSkinIdx = getNextVisibleIdx(FLOOR_SKINS, currentFloorSkinIdx, dir);
         applyFloorSkin();
       }
       updateSkinUI();

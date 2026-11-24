@@ -806,8 +806,12 @@
     } while (!isSkinVisible(skinArray[idx]) && attempts < skinArray.length);
     return idx;
   }
-  function getVisibleThermoSkins() {
-    return THERMO_SKINS.filter(s => isSkinVisible(s));
+  function getVisiblePlayerSkins() {
+  return PLAYER_SKINS.filter(s => isSkinVisible(s));
+}
+function getVisibleFanisSkins() {
+  // Исключаем последний скин "Рандомка" — он только как режим выбора
+  return FANIS_SKINS.filter((s, i) => i < FANIS_SKINS.length - 1 && isSkinVisible(s));
   }
 
   let currentPlayerSkinIdx = 0;
@@ -1308,18 +1312,19 @@
       el.style.top = sy + 'px';
 
       if (type === FANIS_TYPE.THERMO) {
-        el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
-      } else {
-        let skinUrl;
-        if (isRandomMode) {
-          const randomIdx = Math.floor(Math.random() * (FANIS_SKINS.length - 1));
-          skinUrl = FANIS_SKINS[randomIdx].url;
-        } else {
-          skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
-        }
-        el.style.backgroundImage = `url('${skinUrl}')`;
+  el.style.backgroundImage = `url('${THERMO_SKINS[currentThermoSkinIdx].url}')`;
+} else {
+  let skinUrl;
+  if (isRandomMode) {
+    const visibleSkins = getVisibleFanisSkins();
+    const randomSkin = visibleSkins[Math.floor(Math.random() * visibleSkins.length)];
+    skinUrl = randomSkin.url;
+  } else {
+    skinUrl = FANIS_SKINS[currentFanisSkinIdx].url;
+  }
+  el.style.backgroundImage = `url('${skinUrl}')`;
       }
-
+      
       world.appendChild(el);
 
       let speed, shootRange, cooldownMult, bulletSpeedMult, bulletSize, piercesWalls;
@@ -1374,12 +1379,14 @@
       }
       if (hitsWall(sx, sy, ALLY_SIZE / 2)) { sx = px; sy = py; }
 
-      const skinIdx = Math.floor(Math.random() * PLAYER_SKINS.length);
-      const el = document.createElement('div');
-      el.className = 'ally';
-      el.style.left = sx + 'px';
-      el.style.top = sy + 'px';
-      el.style.backgroundImage = `url('${PLAYER_SKINS[skinIdx].url}')`;
+      const visibleSkins = getVisiblePlayerSkins();
+const chosenSkin = visibleSkins[Math.floor(Math.random() * visibleSkins.length)];
+const skinIdx = PLAYER_SKINS.indexOf(chosenSkin);
+const el = document.createElement('div');
+el.className = 'ally';
+el.style.left = sx + 'px';
+el.style.top = sy + 'px';
+el.style.backgroundImage = `url('${chosenSkin.url}')`;
       world.appendChild(el);
       allies.push({ x: sx, y: sy, el, alive: true, wanderAngle: Math.random() * Math.PI * 2, skinIdx });
     }

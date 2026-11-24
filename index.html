@@ -1003,8 +1003,8 @@
       const el = document.createElement('div');
       el.className = 'fanis fanis-type-' + type;
       // Позиционируем по ЦЕНТРУ
-      el.style.left = sx + 'px'; 
-      el.style.top = sy + 'px';
+      el.style.left = (sx + ALLY_SIZE/2) + 'px';
+el.style.top = (sy + ALLY_SIZE/2) + 'px';
       
       // Термофанис: текстура термометра в форме фаниса
       if (type === FANIS_TYPE.THERMO) {
@@ -1107,8 +1107,8 @@
       const obj = { x: ally.x, y: ally.y };
       tryMove(obj, mx * speed, my * speed, ALLY_SIZE / 2);
       ally.x = obj.x; ally.y = obj.y;
-      ally.el.style.left = ally.x + 'px';
-      ally.el.style.top = ally.y + 'px';
+      ally.el.style.left = (ally.x + ALLY_SIZE/2) + 'px';
+ally.el.style.top = (ally.y + ALLY_SIZE/2) + 'px';
     }
   }
 
